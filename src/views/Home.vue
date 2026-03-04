@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import hackerHero from '../assets/hacker-hero.png'
+import Live2DAvatar from '../components/Live2DAvatar.vue'
 
 const typingText = ref('')
 const MSG = 'Welcome to my blog'
@@ -43,24 +43,8 @@ onUnmounted(() => { stopped = true })
       <span class="animate-pulse" style="color:#ff003c">▌</span>
     </div>
 
-    <!-- Imagen con efecto TV -->
-    <div class="tv-wrapper">
-      <img
-        :src="hackerHero"
-        alt="Hacker"
-        class="tv-image w-56 md:w-72 lg:w-80 object-contain select-none"
-        draggable="false"
-      />
-      <div class="scanlines"></div>
-      <div class="tv-flicker"></div>
-    </div>
-
-    <!-- Badge HackTheBox -->
-    <img
-      src="https://www.hackthebox.com/badge/image/114171"
-      alt="HackTheBox badge"
-      class="max-w-[220px] md:max-w-xs"
-    />
+    <!-- Avatar con menú hover -->
+    <Live2DAvatar />
 
   </div>
 </template>

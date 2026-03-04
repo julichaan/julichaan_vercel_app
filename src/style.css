@@ -8,6 +8,17 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* ── Palette ── */
+  --c-red:      #ff003c;   /* primary — crimson accent */
+  --c-green:    #00ff9f;   /* terminal — phosphor green */
+  --c-blue:     #38bdf8;   /* secondary — sky blue, relaxing */
+  --c-blue-dim: #0ea5e960; /* secondary muted */
+  --c-bg:       #000;
+  --c-surface:  #080808;
+  --c-border:   #ffffff08;
+  --c-muted:    #444;
+  --c-text:     #c8c8c8;
 }
 
 *, *::before, *::after {
