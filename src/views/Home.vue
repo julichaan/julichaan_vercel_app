@@ -55,6 +55,13 @@ onUnmounted(() => { stopped = true })
       <div class="tv-flicker"></div>
     </div>
 
+    <!-- Badge HackTheBox -->
+    <img
+      src="https://www.hackthebox.com/badge/image/114171"
+      alt="HackTheBox badge"
+      class="max-w-[220px] md:max-w-xs"
+    />
+
   </div>
 </template>
 
