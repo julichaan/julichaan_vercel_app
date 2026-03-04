@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors font-medium;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium;
+  }
+
+  .article-card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden;
+  }
+
+  .article-card-title {
+    @apply text-xl font-bold text-gray-900 mb-2;
+  }
+
+  .article-card-meta {
+    @apply text-sm text-gray-500 mb-3;
+  }
+}
