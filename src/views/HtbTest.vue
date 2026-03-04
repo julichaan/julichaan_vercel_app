@@ -3,29 +3,26 @@ import { ref, onMounted } from 'vue'
 
 const data = ref(null)
 const error = ref(null)
+const rawError = ref(null)
 const loading = ref(true)
 
 onMounted(async () => {
   try {
     const res = await fetch('/api/htb')
     const json = await res.json()
-    if (json.error) throw new Error(json.error)
-    data.value = json.profile?.profile ?? json.profile
+    if (json.error) {
+      error.value = json.error
+      rawError.value = json.raw ?? null
+      return
+    }
+    // Normalizar estructura — HTB puede devolver { profile: {...} } o directo
+    data.value = json.profile ?? json
   } catch (e) {
     error.value = e.message
   } finally {
     loading.value = false
   }
 })
-
-const rankColor = (rank) => {
-  const map = {
-    'Noob': '#aaa', 'Script Kiddie': '#7ec8e3', 'Hacker': '#9fef00',
-    'Pro Hacker': '#ffaf00', 'Elite Hacker': '#ff6b00',
-    'Guru': '#ff003c', 'Omniscient': '#b44fff',
-  }
-  return map[rank] ?? '#ff003c'
-}
 </script>
 
 <template>
@@ -46,8 +43,19 @@ const rankColor = (rank) => {
     </div>
 
     <!-- Error -->
-    <div v-else-if="error" class="max-w-4xl mx-auto text-center py-20">
+    <div v-else-if="error" class="max-w-4xl mx-auto py-10 space-y-4">
       <p class="text-sm" style="color:#ff003c">error: {{ error }}</p>
+      <p v-if="rawError" class="text-xs text-gray-600 font-mono">{{ rawError }}</p>
+      <!-- Badge oficial siempre disponible -->
+      <div class="flex flex-col items-center gap-2 pt-6">
+        <p class="text-xs text-gray-600 tracking-widest">BADGE OFICIAL (siempre disponible)</p>
+        <img
+          src="https://www.hackthebox.com/badge/image/114171"
+          alt="HTB Badge"
+          class="max-w-xs rounded"
+          style="border:1px solid #ff003c33"
+        />
+      </div>
     </div>
 
     <!-- Dashboard -->
