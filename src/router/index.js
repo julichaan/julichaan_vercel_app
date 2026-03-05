@@ -1,18 +1,51 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 
+const BASE = 'julichaan'
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    // Landing — sin header ni footer
-    { path: '/', component: Home },
-    // Páginas con layout completo
-    { path: '/about',          component: () => import('../views/About.vue'),          meta: { layout: 'default' } },
-    { path: '/certificaciones', component: () => import('../views/Certificaciones.vue'), meta: { layout: 'default' } },
-    { path: '/writeups',        component: () => import('../views/Writeups.vue'),        meta: { layout: 'default' } },
-    { path: '/blog',            component: () => import('../views/Blog.vue'),            meta: { layout: 'default' } },
-    { path: '/notes',           component: () => import('../views/Notes.vue'),           meta: { layout: 'default' } },
+    {
+      path: '/',
+      component: Home,
+      meta: { title: `${BASE} | Security Researcher & Bug Bounty Hunter` }
+    },
+    {
+      path: '/about',
+      component: () => import('../views/About.vue'),
+      meta: { layout: 'default', title: `About · ${BASE}` }
+    },
+    {
+      path: '/certificaciones',
+      component: () => import('../views/Certificaciones.vue'),
+      meta: { layout: 'default', title: `Certifications · ${BASE}` }
+    },
+    {
+      path: '/writeups',
+      component: () => import('../views/Writeups.vue'),
+      meta: { layout: 'default', title: `Writeups · ${BASE}` }
+    },
+    {
+      path: '/blog',
+      component: () => import('../views/Blog.vue'),
+      meta: { layout: 'default', title: `Blog · ${BASE}` }
+    },
+    {
+      path: '/notes',
+      component: () => import('../views/Notes.vue'),
+      meta: { layout: 'default', title: `Notes · ${BASE}` }
+    },
+    {
+      path: '/writeup',
+      component: () => import('../views/WriteupViewer.vue'),
+      meta: { title: `Writeup · ${BASE}` }   // no layout → no navbar/footer
+    },
   ],
+})
+
+router.afterEach((to) => {
+  document.title = to.meta?.title ?? `${BASE} | Security Researcher`
 })
 
 export default router
