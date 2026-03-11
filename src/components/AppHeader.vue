@@ -7,7 +7,7 @@ const mobileOpen = ref(false)
 
 // Typing en el logo (comando después del prompt)
 const logoText = ref('')
-const COMMANDS = ['whoami', 'cat about.md', 'ls -la', 'ssh julichaan@blog', 'nmap -sV target', './exploit.py']
+const COMMANDS = ['whoami', 'ls -la', 'ssh julichaan@blog', 'nmap -sV target', './exploit.py']
 let stopped = false
 
 onMounted(async () => {
