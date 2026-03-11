@@ -14,7 +14,7 @@
           v-for="post in posts"
           :key="post.id"
           class="post-card"
-          @click="activePost = post"
+          @click="openPost(post)"
         >
           <div class="card-top">
             <span class="card-category">{{ post.category }}</span>
@@ -35,7 +35,13 @@
 
     <!-- ── POST VIEW ──────────────────────────────── -->
     <div v-else class="post-view">
-      <button class="back-btn" @click="activePost = null">← Back to Blog</button>
+      <div class="post-actions">
+        <button class="back-btn" @click="closePost()">← Back to Blog</button>
+        <button class="share-btn" :class="{ copied }" @click="copyLink()">
+          <span v-if="!copied">⎘ Copy link</span>
+          <span v-else>✓ Copied!</span>
+        </button>
+      </div>
 
       <header class="post-header">
         <div class="post-meta-top">
@@ -103,9 +109,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
 
 const activePost = ref(null)
+const copied = ref(false)
+
+onMounted(() => {
+  const postId = route.query.post
+  if (postId) {
+    const found = posts.value.find(p => p.id === Number(postId))
+    if (found) activePost.value = found
+  }
+})
+
+function openPost(post) {
+  activePost.value = post
+  router.replace({ path: '/blog', query: { post: post.id } })
+}
+
+function closePost() {
+  activePost.value = null
+  router.replace({ path: '/blog', query: {} })
+}
+
+function copyLink() {
+  const url = `${window.location.origin}/blog?post=${activePost.value.id}`
+  navigator.clipboard.writeText(url)
+  copied.value = true
+  setTimeout(() => { copied.value = false }, 2000)
+}
 
 const posts = ref([
   {
@@ -571,15 +607,34 @@ if os.path.exists(TARGET_CMD):
 /* ── Post View ───────────────────────────────────── */
 .post-view { max-width: 820px; margin: 0 auto; }
 
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
 .back-btn {
   font-family: inherit; font-size: .75rem; letter-spacing: .1em;
   color: #38bdf8; background: transparent;
   border: 1px solid #38bdf833; padding: 7px 16px;
   border-radius: 2px; cursor: pointer;
-  transition: all .15s; margin-bottom: 2.5rem;
+  transition: all .15s;
   text-transform: uppercase;
 }
 .back-btn:hover { background: #38bdf80d; border-color: #38bdf8; }
+
+.share-btn {
+  font-family: inherit; font-size: .75rem; letter-spacing: .1em;
+  color: #444; background: transparent;
+  border: 1px solid #ffffff12; padding: 7px 16px;
+  border-radius: 2px; cursor: pointer;
+  transition: all .15s; text-transform: uppercase;
+  margin-left: auto;
+}
+.share-btn:hover { color: #fff; border-color: #ffffff33; }
+.share-btn.copied { color: #00ff9f; border-color: #00ff9f33; }
 
 .post-header { margin-bottom: 3rem; }
 .post-meta-top { display: flex; gap: .75rem; margin-bottom: 1.25rem; }
