@@ -105,6 +105,130 @@ const activePost = ref(null)
 
 const posts = ref([
   {
+    id: 2,
+    title: 'RootedCon 2026: When the Threat Landscape Started Thinking for Itself',
+    excerpt: 'Three days immersed in one of Europe\'s most technically dense security conferences. This year, the signal was clear: AI is no longer a tool — it\'s an actor. Notes, reflections and technical highlights from Madrid.',
+    date: 'March 2026',
+    category: 'Conference',
+    author: 'julichaan',
+    readTime: '9 min read',
+    tags: ['RootedCon', 'AI Security', 'LLM', 'Red Team', 'Conference', '2026'],
+    content: [
+      {
+        type: 'callout', variant: 'info',
+        text: 'RootedCon 2026 · March 5–7, 2026 · Palacio Municipal de Congresos, Madrid · ~3,000 attendees · 60+ talks across 4 tracks'
+      },
+      {
+        type: 'h2', text: '1. Setting the Scene'
+      },
+      {
+        type: 'p',
+        text: 'RootedCon has always been the kind of conference that reminds you why you got into this field. No vendor keynotes about "transformative synergies." No keynote slides with lock icons and stock photos. Just engineers, researchers and offensive security practitioners, talking to each other in a language most people outside this industry would find unsettling. The 2026 edition was no different — except for one thing. This year, a significant portion of those conversations were about a class of system that is increasingly capable of participating in them.'
+      },
+      {
+        type: 'p',
+        text: 'Arriving at the Palacio Municipal de Congresos on Thursday morning, it was immediately clear that AI had moved from conference subplot to main thread. Not in the abstract, buzzword-laden sense that dominated industry events two years ago, but in a specific, grounded, often alarming technical sense. The talks were not asking whether AI would change cybersecurity. They were documenting, in precise detail, how it already had.'
+      },
+      {
+        type: 'h2', text: '2. AI as Attack Surface'
+      },
+      {
+        type: 'p',
+        text: 'The first full day opened with what would become the thematic spine of the entire conference: AI systems are not just offensive tools, they are targets. The attack surface introduced by the mass deployment of large language models into enterprise infrastructure — coding assistants, internal chatbots, AI-augmented SOC platforms — has expanded dramatically, and most organizations are protecting it with the same maturity they applied to cloud security in 2014.'
+      },
+      {
+        type: 'h3', text: 'Prompt Injection at Enterprise Scale'
+      },
+      {
+        type: 'p',
+        text: 'One of the most technically precise talks of the conference demonstrated a systematic methodology for exploiting <strong>indirect prompt injection</strong> in production AI pipelines. The researcher walked through a scenario where an LLM-backed internal assistant was fed context from a corporate wiki. By embedding adversarial instructions inside a seemingly innocuous document — one that any employee could edit — they were able to exfiltrate conversation history, bypass access controls, and pivot laterally across connected API integrations, all without touching a single line of application code. The attack required no authentication bypass, no memory corruption, no CVE. Just text.'
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'The most uncomfortable insight: indirect prompt injection is architecturally difficult to patch without fundamentally rethinking how LLMs are granted tool access. Sandboxing instructions from data is an unsolved problem at the model level.'
+      },
+      {
+        type: 'h3', text: 'Jailbreaking as a Red Team Primitive'
+      },
+      {
+        type: 'p',
+        text: 'A second session reframed jailbreaking — a topic that had previously attracted more Twitter engagement than serious research — as a legitimate red team primitive with measurable operational value. The speaker presented a structured taxonomy of modern bypass techniques: role-based reframing, multi-turn context poisoning, token boundary manipulation, and cross-model transfer of adversarial suffixes. What made this talk exceptional was the emphasis on <strong>automation and scale</strong>. Using a closed-loop fuzzer that leveraged one LLM to generate adversarial prompts against another, they achieved consistent policy bypasses across several commercial models at a rate that manual testing could never replicate.'
+      },
+      {
+        type: 'h2', text: '3. AI as Offensive Capability'
+      },
+      {
+        type: 'p',
+        text: 'The second persistent theme — and the one that generated the most discussion in the hallways — was the use of AI to augment traditional offensive techniques. Not the theoretical version, but demonstrations running live, producing real output.'
+      },
+      {
+        type: 'h3', text: 'Autonomous Vulnerability Discovery'
+      },
+      {
+        type: 'p',
+        text: 'A particularly dense technical session covered an agent-based framework for automated vulnerability research. The system combined static code analysis, LLM-driven hypothesis generation, and dynamic instrumentation to identify exploitable conditions in C and Rust codebases. The researchers had run it against a corpus of open-source projects and presented results that were, to put it plainly, difficult to argue with: several previously unreported memory safety issues, one of which had been present in a widely deployed library for over four years. The point was not that AI had replaced security researchers — it had not. The point was that the asymmetry between what automated systems can cover and what a team of humans can review is now measurable in orders of magnitude.'
+      },
+      {
+        type: 'h3', text: 'Social Engineering at Synthetic Scale'
+      },
+      {
+        type: 'p',
+        text: 'A talk that sat at the intersection of offensive operations and adversarial AI examined the current state of AI-generated social engineering. The presenter demonstrated a pipeline — assembled entirely from publicly available models — capable of generating highly contextualised spear-phishing content at scale, including voice cloning for vishing scenarios using less than twelve seconds of reference audio. The operational cost of a sophisticated, targeted social engineering campaign has collapsed. What previously required a skilled operator and significant preparation time can now, in many configurations, be templated and dispatched in minutes. The defensive implications are not yet reflected in most organisation\'s awareness training programs.'
+      },
+      {
+        type: 'h2', text: '4. The Technical Talks That Defined the Conference'
+      },
+      {
+        type: 'p',
+        text: 'Outside of the AI track, the conference maintained the technical rigour that has always distinguished RootedCon from more commercially oriented events.'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Kernel exploitation in constrained environments:</strong> An exceptional deep-dive into contemporary Linux kernel exploitation techniques under modern mitigations — KASLR, SMEP, SMAP, CFI — using a novel approach to leak kernel addresses through side-channel timing in BPF programs.',
+          '<strong>Active Directory post-exploitation in 2026:</strong> A methodical walkthrough of AD attack paths that remain viable despite years of hardening guidance, with particular focus on certificate abuse via ADCS ESC chains that are still misconfigured in real-world enterprise environments.',
+          '<strong>Hardware implants and supply chain integrity:</strong> A sobering demonstration of implant detection techniques — and their limitations — when adversaries operate at the firmware or PCB level. The researcher opened with a live inspection of a commercially available network device.',
+          '<strong>Browser engine internals for web security researchers:</strong> A highly technical session on memory management in Chromium\'s renderer process, covering the gap between what a developer-facing vulnerability scanner reports and what is actually reachable from a V8 perspective.',
+        ]
+      },
+      {
+        type: 'h2', text: '5. Red Teaming in the Age of AI-Augmented Defence'
+      },
+      {
+        type: 'p',
+        text: 'One of the most practically valuable sessions of the conference addressed a question that is increasingly relevant to offensive practitioners: what does red teaming look like when the blue team has AI-assisted detection? The presenter had conducted a structured experiment, running a series of standard red team engagements against environments with AI-augmented EDR and SIEM platforms, and documented in detail which techniques had degraded in effectiveness, which remained viable, and why. The answer was nuanced. AI detection is genuinely strong against known patterns at scale. It is considerably weaker against low-and-slow techniques, novel tooling, and living-off-the-land approaches that produce telemetry indistinguishable from legitimate administrative activity. The fundamental tension between behavioural detection and operational stealth has not been resolved — it has been elevated into a higher-dimensional space.'
+      },
+      {
+        type: 'callout', variant: 'info',
+        text: 'Consistent theme across multiple talks: AI detection excels at pattern matching at volume. It struggles with semantic ambiguity and context-dependent legitimacy. The most evasive techniques in 2026 are not technical — they are contextual.'
+      },
+      {
+        type: 'h2', text: '6. Key Takeaways'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>AI security is no longer a specialisation:</strong> It is baseline knowledge. Every security professional needs to understand threat models specific to LLM deployments — prompt injection, supply chain attacks on model weights, inference-time data leakage.',
+          '<strong>The automation asymmetry is real and growing:</strong> Offensive automation — fuzzing, recon, payload generation — has scaled faster than defensive tooling. The gap will not close without architectural change on the defensive side.',
+          '<strong>Classic disciplines remain essential:</strong> Kernel exploitation, network protocol analysis, hardware security — none of these have been rendered obsolete. The new attack surface has been added on top, not in replacement.',
+          '<strong>The social engineering threat surface has changed qualitatively:</strong> Organisations that haven\'t updated their phishing simulation and awareness programs to account for synthetic media and AI-personalised content are training against a threat that no longer reflects reality.',
+          '<strong>Community density matters:</strong> Three days of hallway conversations with people building offensive tools, researching defences, and running real operations is more valuable than any single talk. This is why RootedCon continues to matter.',
+        ]
+      },
+      {
+        type: 'h2', text: '7. Final Thoughts'
+      },
+      {
+        type: 'p',
+        text: 'I left Madrid on Saturday evening with the specific kind of mental fatigue that only comes from three consecutive days of genuine information density. The 2026 edition of RootedCon was, in my opinion, the most technically significant in recent memory — not because the individual talks were better than previous years, but because the aggregate picture they painted was harder to dismiss. The integration of AI into both offensive and defensive cybersecurity is no longer a trajectory. It is the present state. The researchers presenting at RootedCon this year were not speculating about what AI would eventually be able to do. They were demonstrating what it does now, in production, against real infrastructure.'
+      },
+      {
+        type: 'p',
+        text: 'If there is a single conclusion worth taking seriously, it is this: the pace of capability development in AI systems is currently outrunning the security research community\'s ability to characterise the attack surface those systems introduce. RootedCon 2026 was not a warning about the future. It was a precise technical description of where we already are. That is, in equal measure, what makes it essential and what makes it uncomfortable.'
+      },
+    ]
+  },
+  {
     id: 1,
     title: 'CVE-2024-32019: Local Privilege Escalation in Netdata Agent via ndsudo',
     excerpt: 'Analysis of an untrusted search path vulnerability (CWE-426) in Netdata\'s SUID binary ndsudo that allows a local low-privileged user to escalate to root by injecting a malicious executable into the PATH resolution chain.',
