@@ -32,7 +32,6 @@ const closeMenu = () => {
         <div class="hidden md:flex gap-8">
           <router-link to="/" class="text-gray-300 hover:text-cyan-400 transition-colors font-medium">Inicio</router-link>
           <router-link to="/blog" class="text-gray-300 hover:text-cyan-400 transition-colors font-medium">Blog</router-link>
-          <router-link to="/about" class="text-gray-300 hover:text-cyan-400 transition-colors font-medium">Sobre Mí</router-link>
           <router-link to="/contact" class="text-gray-300 hover:text-cyan-400 transition-colors font-medium">Contacto</router-link>
         </div>
 
@@ -62,13 +61,6 @@ const closeMenu = () => {
           class="block px-4 py-2 rounded-lg hover:bg-gray-900 hover:border-l-2 hover:border-cyan-500 transition-all text-gray-300 hover:text-cyan-400"
         >
           Blog
-        </router-link>
-        <router-link
-          to="/about"
-          @click="closeMenu"
-          class="block px-4 py-2 rounded-lg hover:bg-gray-900 hover:border-l-2 hover:border-cyan-500 transition-all text-gray-300 hover:text-cyan-400"
-        >
-          Sobre Mí
         </router-link>
         <router-link
           to="/contact"

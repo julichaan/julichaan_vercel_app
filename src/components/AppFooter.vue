@@ -1,6 +1,5 @@
 <script setup>
 const LINKS = [
-  { label: 'About',          path: '/about' },
   { label: 'Certifications', path: '/certificaciones' },
   { label: 'Writeups',       path: '/writeups' },
   { label: 'Blog',           path: '/blog' },
