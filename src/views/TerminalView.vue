@@ -8,7 +8,7 @@ const outputLines = ref([])
 const inputRef = ref(null)
 const outputRef = ref(null)
 
-const PROMPT = 'visitor@cyberport:~$'
+const PROMPT = 'visitor@blog:~$'
 
 const COMMANDS = {
   help: {
@@ -133,7 +133,7 @@ onMounted(async () => {
           <div class="w-3 h-3 rounded-full bg-red-500"></div>
           <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
           <div class="w-3 h-3 rounded-full bg-green-500"></div>
-          <span class="ml-4 text-gray-400 text-sm">visitor@cyberport: ~</span>
+          <span class="ml-4 text-gray-400 text-sm">visitor@blog: ~</span>
         </div>
 
         <!-- Cuerpo -->

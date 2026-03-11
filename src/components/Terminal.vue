@@ -19,7 +19,7 @@ const TYPING_MSGS = [
   'grep -r "password" /var/log/',
   'netstat -tulpn',
   'chmod 777 exploit.sh && ./exploit.sh',
-  'curl -s https://cyberport.dev',
+  'curl -s https://blog.dev',
   'whoami',
   'ls -la /root/',
   'ps aux | grep suspicious',
@@ -31,7 +31,7 @@ const TYPING_MSGS = [
 ]
 let typingIndex = 0
 
-const PROMPT = 'visitor@cyberport:~$'
+const PROMPT = 'visitor@blog:~$'
 
 const COMMANDS = {
   help: {
@@ -171,7 +171,7 @@ onMounted(async () => {
             <div class="w-3 h-3 rounded-full bg-red-500"></div>
             <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
             <div class="w-3 h-3 rounded-full bg-green-500"></div>
-            <span class="ml-4 text-gray-400 text-sm">visitor@cyberport: ~</span>
+            <span class="ml-4 text-gray-400 text-sm">visitor@blog: ~</span>
           </div>
 
           <!-- Cuerpo -->

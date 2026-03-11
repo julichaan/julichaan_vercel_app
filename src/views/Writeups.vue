@@ -10,7 +10,7 @@ const sidebarOpen  = ref(false)
 const openNodes    = ref(new Set(['writeups']))
 const activeFile   = ref(null)   // { name, folder, mdFile, viewerUrl }
 
-const PROMPT = 'visitor@cyberport:~/writeups$'
+const PROMPT = 'visitor@blog:~/writeups$'
 
 // ── Filesystem ───────────────────────────────────────────────────
 const FS = {
@@ -275,20 +275,24 @@ const onKeydown = (e) => {
 }
 
 onMounted(async () => {
-  outputLines.value = [
-    { text: '██╗    ██╗██████╗ ██╗████████╗███████╗██╗   ██╗██████╗ ███████╗', type: 'ascii' },
-    { text: '██║    ██║██╔══██╗██║╚══██╔══╝██╔════╝██║   ██║██╔══██╗██╔════╝', type: 'ascii' },
-    { text: '██║ █╗ ██║██████╔╝██║   ██║   █████╗  ██║   ██║██████╔╝███████╗', type: 'ascii' },
-    { text: '██║███╗██║██╔══██╗██║   ██║   ██╔══╝  ██║   ██║██╔═══╝ ╚════██║', type: 'ascii' },
-    { text: '╚███╔███╔╝██║  ██║██║   ██║   ███████╗╚██████╔╝██║     ███████║', type: 'ascii' },
-    { text: ' ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝   ╚═╝   ╚══════╝ ╚═════╝ ╚═╝     ╚══════╝', type: 'ascii' },
-    { text: '', type: 'output' },
-    { text: '  CTF, HackTheBox and Bug Bounty writeups.', type: 'muted' },
-    { text: '  Type "help" to see available commands.', type: 'muted' },
-    { text: '', type: 'output' },
-  ]
-  await nextTick()
-  focusInput()
+  if (window.innerWidth <= 768) {
+    sidebarOpen.value = true
+  } else {
+    outputLines.value = [
+      { text: '██╗    ██╗██████╗ ██╗████████╗███████╗██╗   ██╗██████╗ ███████╗', type: 'ascii' },
+      { text: '██║    ██║██╔══██╗██║╚══██╔══╝██╔════╝██║   ██║██╔══██╗██╔════╝', type: 'ascii' },
+      { text: '██║ █╗ ██║██████╔╝██║   ██║   █████╗  ██║   ██║██████╔╝███████╗', type: 'ascii' },
+      { text: '██║███╗██║██╔══██╗██║   ██║   ██╔══╝  ██║   ██║██╔═══╝ ╚════██║', type: 'ascii' },
+      { text: '╚███╔███╔╝██║  ██║██║   ██║   ███████╗╚██████╔╝██║     ███████║', type: 'ascii' },
+      { text: ' ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝   ╚═╝   ╚══════╝ ╚═════╝ ╚═╝     ╚══════╝', type: 'ascii' },
+      { text: '', type: 'output' },
+      { text: '  CTF, HackTheBox and Bug Bounty writeups.', type: 'muted' },
+      { text: '  Type "help" to see available commands.', type: 'muted' },
+      { text: '', type: 'output' },
+    ]
+    await nextTick()
+    focusInput()
+  }
   window.addEventListener('keydown', onKeydown)
 })
 
@@ -334,7 +338,7 @@ onUnmounted(() => {
             <span class="dot dot-red"></span>
             <span class="dot dot-yellow"></span>
             <span class="dot dot-green"></span>
-            <span class="titlebar-label">visitor@cyberport: ~/writeups</span>
+            <span class="titlebar-label">visitor@blog: ~/writeups</span>
           </div>
           <div ref="outputRef" class="terminal-body">
             <div v-for="(line, i) in outputLines" :key="i" class="line" :class="line.type">
@@ -553,10 +557,16 @@ onUnmounted(() => {
 
 /* ── Responsive ──────────────────────────────────────── */
 @media (max-width: 768px) {
-  .writeups-root { padding: 1rem; }
-  .terminal-body { padding: 1.25rem 1.5rem; height: 60vh; }
-  .file-sidebar  { width: 180px; }
-  .sidebar-enter-to, .sidebar-leave-from { width: 180px; }
+  .writeups-root { padding: 1rem; justify-content: flex-start; padding-top: 2rem; }
+  .terminal-wrap { display: none; }
+  .file-sidebar {
+    width: 100%;
+    border-radius: 6px;
+    border-right: 1px solid #ff003c2a;
+  }
+  .fs-body { min-height: 60vh; }
+  .fs-close { display: none; }
+  .sidebar-enter-to, .sidebar-leave-from { width: 100%; }
   .writeup-overlay { padding: 1vh 1vw; }
   .writeup-modal { width: 99vw; height: 98vh; border-radius: 4px; }
 }
