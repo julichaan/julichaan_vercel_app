@@ -33,7 +33,7 @@ onMounted(async () => {
 onUnmounted(() => { stopped = true })
 
 const NAV = [
-  { label: 'CV',               path: '/cv' },
+  { label: 'About',            path: '/about' },
   { label: 'Certifications',   path: '/certificaciones' },
   { label: 'Writeups',         path: '/writeups' },
   { label: 'Blog',             path: '/blog' },
