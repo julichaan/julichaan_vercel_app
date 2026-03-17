@@ -36,7 +36,13 @@ const profile = {
   github:   'github.com/julichaan',
   linkedin: 'linkedin.com/in/julichaan',
   about:
-    'Especialista en seguridad ofensiva con experiencia en bug bounty, CTFs y pentesting web. Apasionada por encontrar vulnerabilidades antes de que lo hagan los malos. Actualmente explorando el mundo del reversing y la explotación de binarios.',
+    'Soy un ingeniero de ciberseguridad de 27 años apasionado por mi trabajo, especializado en Red Team y Pentesting. Mi objetivo es proteger la integridad y la confidencialidad de los sistemas de información mediante análisis proactivos y simulaciones de ataques. Con una sólida formación académica y diversas certificaciones reconocidas por la industria, me dedico a identificar y mitigar vulnerabilidades antes de que puedan ser explotadas.\n\n' +
+    'Mis competencias principales incluyen:\n' +
+    'Red Team: Simulación de ataques del mundo real para evaluar y mejorar la postura de seguridad de las organizaciones.\n' +
+    'Pentesting: Realización de pruebas de penetración detalladas para identificar y remediar fallos de seguridad.\n' +
+    'Análisis de vulnerabilidades: Evaluación de sistemas y aplicaciones para descubrir y mitigar riesgos.\n' +
+    'Respuesta a incidentes: Desarrollo e implementación de planes de respuesta para mitigar el impacto de los incidentes de seguridad.\n\n' +
+    'En mi tiempo libre, disfruto resolviendo retos CTF (Capture The Flag) y aprendiendo constantemente sobre nuevas vulnerabilidades. La ciberseguridad no es solo mi profesión; es mi pasión.',
 }
 
 const experience = [
@@ -132,7 +138,7 @@ const skills = {
           <!-- SOBRE MÍ -->
           <section>
             <h2 class="section-title">SOBRE MÍ</h2>
-            <p class="text-sm leading-relaxed text-gray-400">{{ profile.about }}</p>
+            <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line">{{ profile.about }}</p>
           </section>
 
           <!-- EXPERIENCIA -->
