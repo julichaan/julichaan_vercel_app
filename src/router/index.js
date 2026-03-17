@@ -12,6 +12,11 @@ const router = createRouter({
       meta: { title: `${BASE} | Security Researcher & Bug Bounty Hunter` }
     },
     {
+      path: '/cv',
+      component: () => import('../views/CV.vue'),
+      meta: { layout: 'default', title: `CV · ${BASE}` }
+    },
+    {
       path: '/certificaciones',
       component: () => import('../views/Certificaciones.vue'),
       meta: { layout: 'default', title: `Certifications · ${BASE}` }
