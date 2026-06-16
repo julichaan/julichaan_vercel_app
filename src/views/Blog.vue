@@ -145,6 +145,165 @@ function copyLink() {
 
 const posts = ref([
   {
+    id: 4,
+    title: 'CVE-2026-0257: PAN-OS GlobalProtect Authentication Bypass Under Active Exploitation',
+    excerpt: 'Unit42 reports active exploitation of a critical authentication bypass vulnerability in PAN-OS GlobalProtect portals and gateways. Threat actors are probing devices and attempting unauthorized VPN access. Analysis of attack indicators, detection strategies, and remediation guidance.',
+    date: 'June 2026',
+    category: 'Threat Intelligence',
+    author: 'julichaan',
+    readTime: '8 min read',
+    tags: ['CVE-2026-0257', 'PAN-OS', 'GlobalProtect', 'Authentication Bypass', 'VPN', 'Threat Intelligence'],
+    content: [
+      {
+        type: 'callout', variant: 'info',
+        text: 'CVE-2026-0257 · PAN-OS GlobalProtect Authentication Bypass · CISA KEV Catalog · Published: May 29, 2026 · Source: Palo Alto Networks Unit42 · Status: Active Exploitation (Pre & Post PoC Release)'
+      },
+      {
+        type: 'h2', text: '1. Threat Overview'
+      },
+      {
+        type: 'p',
+        text: 'Palo Alto Networks Unit42 has identified <strong>active exploitation</strong> of <strong>CVE-2026-0257</strong> — a critical authentication bypass vulnerability in PAN-OS GlobalProtect portal and gateway components. Threat actors are probing and attempting to gain unauthorized VPN access, leveraging the vulnerability to circumvent security controls. The vulnerability was added to the CISA Known Exploited Vulnerabilities (KEV) catalog on May 29, 2026, indicating exploitation in the wild by unidentified threat actors.'
+      },
+      {
+        type: 'p',
+        text: 'This is not a theoretical risk. The vulnerability is <strong>actively exploited</strong> across multiple attack phases: reconnaissance probes, PoC-based exploitation attempts, and post-release weaponized code deployment. Organizations running vulnerable PAN-OS versions are under immediate threat and should assume hostile activity is occurring against their gateways and portals.'
+      },
+      {
+        type: 'h2', text: '2. Vulnerability Mechanics: Authentication Bypass in GlobalProtect'
+      },
+      {
+        type: 'p',
+        text: 'CVE-2026-0257 is an authentication bypass flaw in the <strong>GlobalProtect portal and gateway components</strong> of PAN-OS software. The vulnerability allows <strong>unauthenticated attackers</strong> to bypass the authentication mechanisms protecting VPN access, establish gateway connections, and initiate legitimate-looking VPN sessions without valid credentials. The flaw enables direct access to the VPN infrastructure, making it a critical stepping stone for lateral movement and internal network compromise.'
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'Unlike other VPN vulnerabilities that lead to denial of service or information disclosure, this flaw directly grants <strong>authenticated gateway access</strong> to unauthenticated attackers. No credentials, no MFA, no device posture — the attacker becomes a "trusted" VPN client from the firewall\'s perspective.'
+      },
+      {
+        type: 'h2', text: '3. Attack Indicators and Observable Activity'
+      },
+      {
+        type: 'h3', text: 'Pre-PoC Phase Indicators'
+      },
+      {
+        type: 'p',
+        text: 'Prior to public proof-of-concept release (before May 29, 2026), Unit42 identified a discrete set of IP addresses probing devices for the vulnerability. Organizations should hunt for successful login connections originating from these sources:'
+      },
+      {
+        type: 'table',
+        headers: ['IP Address', 'Threat Actor Activity'],
+        rows: [
+          ['23.128.228.6', 'Reconnaissance probe'],
+          ['104.207.144.154', 'Initial access attempt'],
+          ['146.19.216.119–120, 125', 'Cluster of active probes'],
+          ['179.43.172.213', 'Exploitation activity'],
+          ['185.195.232.139', 'Lateral movement testing'],
+          ['198.12.106.60', 'Session establishment'],
+          ['202.144.192.47', 'Post-exploitation activity'],
+        ]
+      },
+      {
+        type: 'h3', text: 'Post-PoC Phase Indicators'
+      },
+      {
+        type: 'p',
+        text: 'Following public PoC release, exploit attempts expanded dramatically. Defenders should now monitor GlobalProtect logs for successful gateway-connected events with any of the following suspicious characteristics:'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Spoofed MAC Addresses:</strong> <code>aa:bb:cc:dd:ee:ff</code> or <code>00:11:22:33:44:55</code> — canonical test values appearing in PoC code.',
+          '<strong>Generic Host Names:</strong> <code>WINDOWS-LAPTOP-001</code>, <code>DESKTOP-GP01</code>, <code>GP-CLIENT</code> — placeholder device names indicating automated or scripted exploitation.',
+          '<strong>Hard-coded OS Claims:</strong> Endpoint OS version: <code>Microsoft Windows 10 Pro 64-bit</code> (hard-coded in PoC)',
+          '<strong>Empty Domain Field:</strong> <code>source_user_info.domain = empty</code> — legitimate clients typically report a domain; absence is a red flag.',
+        ]
+      },
+      {
+        type: 'h2', text: '4. Impact Assessment'
+      },
+      {
+        type: 'p',
+        text: 'To date, <strong>no post-access behavior or lateral movement has been conclusively attributed</strong> to CVE-2026-0257 exploitation by Unit42. However, this does not indicate low risk — it indicates attackers have not yet needed to move beyond gateway access, or that post-exploitation activity has evaded detection.'
+      },
+      {
+        type: 'p',
+        text: 'The real concern is the <strong>speed of weaponization</strong>: from PoC release to widespread exploitation occurred in days, not weeks. Only a small percentage of probed devices accepted VPN sessions, suggesting either partial patching in the wild or that attackers are still refining their technique. The velocity of attack normalizes quickly; expect lateral movement attempts to accelerate as attackers iterate and develop post-exploit playbooks.'
+      },
+      {
+        type: 'h2', text: '5. Remediation and Detection Guidance'
+      },
+      {
+        type: 'h3', text: 'Immediate Actions'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Review Security Advisory:</strong> Consult the official Palo Alto Networks Security Advisory for CVE-2026-0257 to determine affected PAN-OS versions and available patches.',
+          '<strong>Upgrade or Apply Workarounds:</strong> Upgrade to a patched PAN-OS version or implement the available workarounds to disable the vulnerable code path.',
+          '<strong>Hunt for Indicators:</strong> Query GlobalProtect logs for successful VPN connections from the listed IP addresses or exhibiting the suspicious host/domain characteristics above.',
+          '<strong>Activate Incident Response:</strong> Any successful gateway-connected event matching attack indicators should trigger immediate incident investigation.',
+        ]
+      },
+      {
+        type: 'h3', text: 'Detection Strategy'
+      },
+      {
+        type: 'p',
+        text: 'GlobalProtect logs are the primary detection surface. Search for:'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<code>gateway-connected</code> events from the known threat IP addresses',
+          'Successful VPN sessions with MAC addresses matching <code>aa:bb:cc:dd:ee:ff</code>, <code>00:11:22:33:44:55</code>, or sequential patterns',
+          'Logins claiming <code>Microsoft Windows 10 Pro 64-bit</code> with an empty domain field',
+          'Device names matching the generic PoC patterns (<code>WINDOWS-LAPTOP-001</code>, etc.)',
+          'Spike in authentication failures followed by sudden success (indicator of brute-force or retry logic)',
+        ]
+      },
+      {
+        type: 'h2', text: '6. Attribution and Context'
+      },
+      {
+        type: 'p',
+        text: 'Unit42 has not attributed the exploitation activity to a specific threat actor or campaign at this time. The threat actor remains unidentified. However, the rapid weaponization and deployment of PoC code suggests <strong>organized threat actor activity</strong> — not opportunistic script-kiddie probing. The infrastructure and coordination required to simultaneously probe multiple PAN-OS instances worldwide points to a well-resourced adversary.'
+      },
+      {
+        type: 'h2', text: '7. Additional Protections and Recommendations'
+      },
+      {
+        type: 'p',
+        text: 'Palo Alto Networks customers have access to several detection and prevention mechanisms:'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Cortex Xpanse:</strong> Identifies publicly exposed PAN-OS gateways and portals — critical for understanding your own attack surface.',
+          '<strong>Advanced URL Filtering:</strong> Can identify malicious IP addresses associated with exploitation activity.',
+          '<strong>Cortex XDR & XSIAM:</strong> Provide endpoint behavioral protections and cloud-based analysis to detect post-compromise activity.',
+          '<strong>Cortex AgentiX:</strong> Enables security analysts to rapidly extract and enrich indicators of compromise (IoCs) from threat intelligence.',
+        ]
+      },
+      {
+        type: 'callout', variant: 'info',
+        text: 'Palo Alto Networks has shared threat intelligence with Cyber Threat Alliance (CTA) members to enable rapid protective deployment across the ecosystem.'
+      },
+      {
+        type: 'h2', text: '8. References'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<a href="https://security.paloaltonetworks.com/CVE-2026-0257" target="_blank">CVE-2026-0257 PAN-OS: GlobalProtect Authentication Bypass Vulnerabilities — Palo Alto Networks Security Advisory</a>',
+          '<a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank">Known Exploited Vulnerabilities Catalog — CISA</a>',
+          '<a href="https://www.rapid7.com/blog/post/etr-rapid7-observed-exploitation-of-pan-os-globalprotect-authentication-bypass-vulnerability-cve-2026-0257/" target="_blank">Rapid7 Observed Exploitation of PAN-OS GlobalProtect Authentication Bypass Vulnerability — Rapid7 ETR</a>',
+          '<a href="https://docs-cortex.paloaltonetworks.com/p/XPANSE" target="_blank">Cortex Xpanse Documentation — Palo Alto Networks</a>',
+        ]
+      },
+    ]
+  },
+  {
     id: 3,
     title: 'CVE-2022-46364: Critical SSRF in Apache CXF via MTOM XOP:Include',
     excerpt: 'Analysis of a critical unauthenticated Server-Side Request Forgery (CWE-918) in Apache CXF\'s MTOM implementation. An attacker embedding a crafted XOP:Include href forces the server to issue arbitrary HTTP or file:// requests, leaking internal resources and cloud metadata credentials with zero prerequisites.',
