@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+
+# Keep project review docs tracked
+!PLAN.md
+!REVISION_PROYECTO.md

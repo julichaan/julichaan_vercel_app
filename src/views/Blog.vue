@@ -145,6 +145,153 @@ function copyLink() {
 
 const posts = ref([
   {
+    id: 5,
+    title: 'ClickFix 2026 + EtherHiding: Fake CAPTCHA Delivery with On-Chain C2 Rotation',
+    excerpt: 'Analysis of an active 2026 ClickFix campaign abusing fake CAPTCHA lures and clipboard hijacking, with C2 discovery delegated to a Polygon smart contract (EtherHiding). Includes attack-chain breakdown, durable IOCs, and defender playbook.',
+    date: 'July 2026',
+    category: 'Threat Intelligence',
+    author: 'julichaan',
+    readTime: '9 min read',
+    tags: ['ClickFix', 'EtherHiding', 'Fake CAPTCHA', 'Clipboard Hijacking', 'Infostealer', 'Polygon', 'Threat Intelligence'],
+    content: [
+      {
+        type: 'callout', variant: 'info',
+        text: 'ClickFix Campaign Analysis · Fake CAPTCHA / Cloudflare lures · Clipboard-to-shell execution · EtherHiding on Polygon · Source: PhishEye investigation · Status: Active (2026)'
+      },
+      {
+        type: 'h2', text: '1. Executive Summary'
+      },
+      {
+        type: 'p',
+        text: 'The 2026 ClickFix playbook no longer depends on browser exploitation. It relies on <strong>human-assisted command execution</strong>: a fake verification page instructs users to open Run/Terminal, paste a preloaded command, and execute it. In the campaign documented by PhishEye, the infrastructure is upgraded with <strong>EtherHiding</strong> — the active C2 domain is fetched from a Polygon smart contract, enabling near-instant infrastructure rotation after takedowns.'
+      },
+      {
+        type: 'table',
+        headers: ['Campaign Trait', 'Observed Detail'],
+        rows: [
+          ['Initial access', 'Compromised WordPress + WooCommerce site with cloaked JavaScript loader'],
+          ['Primary lure', 'Fake CAPTCHA / fake Cloudflare verification'],
+          ['Execution model', 'Clipboard poisoning + user-driven shell execution (PowerShell/Terminal)'],
+          ['Target profile', 'Windows and macOS desktop users (Linux/mobile excluded)'],
+          ['C2 resilience', 'On-chain domain pointer via Polygon smart contract (EtherHiding)'],
+        ]
+      },
+      {
+        type: 'h2', text: '2. Why ClickFix Keeps Winning in 2026'
+      },
+      {
+        type: 'p',
+        text: 'ClickFix shifts the control point from exploit delivery to user behavior. The browser sees a normal page, the OS sees a user running a command, and traditional "malicious download" controls lose visibility. This reduces dependency on exploit chains and makes the campaign durable across patched endpoints.'
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'Any page asking for <code>Win + R</code>, paste, and Enter as "human verification" should be treated as hostile. Real CAPTCHA flows never require shell interaction.'
+      },
+      {
+        type: 'h2', text: '3. Attack Chain (Observed)'
+      },
+      {
+        type: 'code',
+        text:
+`Compromised WP/WooCommerce page
+        ↓
+Cloaked JS loader (fromCharCode + dynamic script injection)
+        ↓
+Reads active C2 from Polygon smart contract (EtherHiding)
+        ↓
+TDS endpoint serves OS-specific lure (Win/mac only)
+        ↓
+Fake CAPTCHA / fake Cloudflare verification page
+        ↓
+Clipboard hijack writes attacker command
+        ↓
+User runs PowerShell/Terminal one-liner
+        ↓
+Infostealer / loader execution`
+      },
+      {
+        type: 'h3', text: 'Stage A — Cloaked Delivery on Compromised Storefront'
+      },
+      {
+        type: 'p',
+        text: 'The compromised e-commerce front-end appears clean under casual inspection. Loader behavior is selective and often assembled at runtime to evade static source review and simplistic crawlers.'
+      },
+      {
+        type: 'h3', text: 'Stage B — TDS and Platform Gating'
+      },
+      {
+        type: 'p',
+        text: 'The campaign performs telemetry and targeting before payload delivery. Only operating systems aligned with the social-engineering script are served (typically Windows/macOS desktops), reducing sandbox noise and increasing conversion.'
+      },
+      {
+        type: 'h3', text: 'Stage C — Clipboard Poisoning + User Execution'
+      },
+      {
+        type: 'p',
+        text: 'The lure page hijacks clipboard workflows and injects a command chain. Victim interaction completes execution, bypassing many controls designed around downloaded binaries or exploit telemetry.'
+      },
+      {
+        type: 'h2', text: '4. EtherHiding: C2 That Rotates Faster Than Takedowns'
+      },
+      {
+        type: 'p',
+        text: 'This campaign uses a Polygon contract as a configuration oracle for active C2 resolution. Per the investigation, repeated on-chain updates rotated domains across the March–June 2026 window. Operationally, this changes takedown economics: domain suspensions remain useful, but they no longer neutralize the campaign root.'
+      },
+      {
+        type: 'table',
+        headers: ['Indicator Type', 'Value'],
+        rows: [
+          ['C2 Smart Contract (Polygon)', '0x08207B087F61d7e95E441E15fd6d40BEfd6eD308'],
+          ['Observed operator wallet', '0x34c15320d6e8f59f1b66f6c191aaa7f87b894b66'],
+          ['Getter selector', '0x38bcdc1c'],
+          ['Observed active C2 in report', 'superboomer[.]world'],
+        ]
+      },
+      {
+        type: 'h2', text: '5. Detection Strategy for Defenders'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Clipboard-to-shell correlation:</strong> Browser activity immediately followed by <code>powershell.exe</code>, <code>mshta.exe</code>, <code>wscript.exe</code>, or unexpected Terminal execution.',
+          '<strong>RunMRU / shell telemetry:</strong> Hunt suspicious paste-driven command patterns, encoded payload switches, and hidden window flags.',
+          '<strong>Network analytics:</strong> Monitor anomalous access to public Polygon RPC endpoints from user workstations where crypto workflows are not expected.',
+          '<strong>Web integrity:</strong> Detect suspicious dynamic script assembly (<code>String.fromCharCode</code>, <code>createElement("script")</code>) on WordPress storefronts.',
+          '<strong>TDS artifacts:</strong> Track fake verification pages and OS-conditional landing paths associated with compromised sites.',
+        ]
+      },
+      {
+        type: 'h2', text: '6. Incident Response Priorities'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Endpoint side:</strong> If command execution is suspected, isolate host, rotate credentials, invalidate sessions/tokens, and perform full IR triage for infostealer impact.',
+          '<strong>Web side:</strong> Remove injected loaders from theme/plugin/database layers, review rogue admin accounts, and rotate WP/hosting/DB credentials.',
+          '<strong>Infrastructure side:</strong> Block known domains and include blockchain identifiers (contract + wallet) in threat intel pipelines for future campaign pivots.',
+          '<strong>User-facing controls:</strong> Reinforce policy that no legitimate CAPTCHA asks for shell commands.',
+        ]
+      },
+      {
+        type: 'h2', text: '7. Analyst Notes'
+      },
+      {
+        type: 'p',
+        text: 'ClickFix + EtherHiding is a practical example of adversaries combining low-tech social engineering with high-resilience infrastructure design. The novelty is not the fake CAPTCHA itself; it is the <strong>operational continuity</strong> achieved by decoupling C2 discovery from disposable domains.'
+      },
+      {
+        type: 'h2', text: '8. References'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<a href="https://phisheye.com/blog/clickfix-2026-fake-captcha-etherhiding" target="_blank">PhishEye — ClickFix 2026 fake CAPTCHA + EtherHiding campaign analysis</a>',
+          '<a href="https://www.proofpoint.com/us/blog/threat-insight/security-brief-clickfix-social-engineering-technique-floods-threat-landscape" target="_blank">Proofpoint — ClickFix social-engineering trend overview</a>',
+        ]
+      },
+    ]
+  },
+  {
     id: 4,
     title: 'CVE-2026-0257: PAN-OS GlobalProtect Authentication Bypass Under Active Exploitation',
     excerpt: 'Unit42 reports active exploitation of a critical authentication bypass vulnerability in PAN-OS GlobalProtect portals and gateways. Threat actors are probing devices and attempting unauthorized VPN access. Analysis of attack indicators, detection strategies, and remediation guidance.',
