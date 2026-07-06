@@ -1,9 +1,14 @@
 <script setup>
+import { computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+
+const { isSpanish } = useLanguage()
+
 const LINKS = [
-  { label: 'Certifications', path: '/certificaciones' },
+  { label: { es: 'Certificaciones', en: 'Certifications' }, path: '/certificaciones' },
   { label: 'Writeups',       path: '/writeups' },
   { label: 'Blog',           path: '/blog' },
-  { label: 'Notes',          path: '/notes' },
+  { label: { es: 'Notas', en: 'Notes' }, path: '/notes' },
 ]
 
 const SOCIAL = [
@@ -20,6 +25,13 @@ const SOCIAL = [
 ]
 
 const year = new Date().getFullYear()
+
+const localizedLinks = computed(() =>
+  LINKS.map((link) => ({
+    ...link,
+    label: typeof link.label === 'string' ? link.label : (isSpanish.value ? link.label.es : link.label.en),
+  })),
+)
 </script>
 
 <template>
@@ -37,8 +49,8 @@ const year = new Date().getFullYear()
           <span class="gray">:~$</span>
         </div>
         <p class="brand-desc">
-          Cybersecurity blog.<br/>
-          Bug Bounty · CTF · Writeups.
+          {{ isSpanish ? 'Blog de ciberseguridad.' : 'Cybersecurity blog.' }}<br/>
+          {{ isSpanish ? 'Bug Bounty · CTF · Writeups.' : 'Bug Bounty · CTF · Writeups.' }}
         </p>
         <!-- Social icons -->
         <div class="social">
@@ -57,9 +69,9 @@ const year = new Date().getFullYear()
 
       <!-- Col 2: Nav -->
       <div class="col">
-        <h4 class="col-title">// Navigation</h4>
+        <h4 class="col-title">{{ isSpanish ? '// Navegación' : '// Navigation' }}</h4>
         <ul class="foot-nav">
-          <li v-for="link in LINKS" :key="link.path">
+          <li v-for="link in localizedLinks" :key="link.path">
             <router-link :to="link.path" class="foot-link">
               <span class="red">›</span> {{ link.label }}
             </router-link>
@@ -69,19 +81,19 @@ const year = new Date().getFullYear()
 
       <!-- Col 3: Status -->
       <div class="col">
-        <h4 class="col-title">// Status</h4>
+        <h4 class="col-title">{{ isSpanish ? '// Estado' : '// Status' }}</h4>
         <ul class="status-list">
           <li>
             <span class="dot green" />
-            <span class="gray-text">All systems operational</span>
+            <span class="gray-text">{{ isSpanish ? 'Todos los sistemas en funcionamiento' : 'All systems operational' }}</span>
           </li>
           <li>
             <span class="dot yellow" />
-            <span class="gray-text">New writeups in progress</span>
+            <span class="gray-text">{{ isSpanish ? 'Nuevos writeups en progreso' : 'New writeups in progress' }}</span>
           </li>
           <li>
             <span class="dot red-dot" />
-            <span class="gray-text">Live2D: disabled for now</span>
+            <span class="gray-text">{{ isSpanish ? 'Live2D: desactivado por ahora' : 'Live2D: disabled for now' }}</span>
           </li>
         </ul>
 
@@ -99,8 +111,8 @@ const year = new Date().getFullYear()
     <!-- Bottom bar -->
     <div class="bottom-bar">
       <span class="bottom-text">
-        <span class="red">©{{ year }}</span> julichaan — made with
-        <span class="red">♥</span> and way too much coffee
+        <span class="red">©{{ year }}</span> julichaan — {{ isSpanish ? 'hecho con' : 'made with' }}
+        <span class="red">♥</span> {{ isSpanish ? 'y demasiado café' : 'and way too much coffee' }}
       </span>
       <span class="bottom-text">
         <span class="gray">[ </span>

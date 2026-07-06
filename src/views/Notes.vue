@@ -12,7 +12,7 @@
             ref="searchInputEl"
             v-model="searchQuery"
             class="search-input"
-            placeholder="Search notes..."
+            :placeholder="isSpanish ? 'Buscar notas...' : 'Search notes...'"
             autocomplete="off"
             spellcheck="false"
             @focus="searchFocused = true"
@@ -48,7 +48,9 @@
                 </span>
               </button>
             </template>
-            <div v-else class="sug-empty">No results for "<em>{{ searchQuery }}</em>"</div>
+            <div v-else class="sug-empty">
+              {{ isSpanish ? 'Sin resultados para' : 'No results for' }} "<em>{{ searchQuery }}</em>"
+            </div>
           </div>
         </Transition>
       </div>
@@ -59,7 +61,7 @@
 
       <!-- Welcome screen -->
       <div v-if="!activeSection" class="welcome">
-        <p class="welcome-pre">// personal knowledge base</p>
+        <p class="welcome-pre">{{ isSpanish ? '// base de conocimiento personal' : '// personal knowledge base' }}</p>
         <h1 class="welcome-title">NOTES</h1>
 
         <div class="tg-wrap">
@@ -71,7 +73,7 @@
           >
             <span class="tg-root-dot"></span>
             <span class="tg-root-label">Bug Bounty</span>
-            <span class="tg-root-count">{{ categories.reduce((s, c) => s + c.items.length, 0) }} sections</span>
+            <span class="tg-root-count">{{ categories.reduce((s, c) => s + c.items.length, 0) }} {{ isSpanish ? 'secciones' : 'sections' }}</span>
             <span class="tg-root-chev" :class="{ open: bbWelcomeOpen }">›</span>
           </button>
 
@@ -114,7 +116,7 @@
       <!-- Section content -->
       <article v-else class="section-view">
         <div class="breadcrumb">
-          <span class="bc-root" @click="activeSection = null">Notes</span>
+          <span class="bc-root" @click="activeSection = null">{{ isSpanish ? 'Notas' : 'Notes' }}</span>
           <span class="bc-sep"> / </span>
           <span class="bc-cat">{{ activeCategoryLabel }}</span>
           <span class="bc-sep"> / </span>
@@ -134,7 +136,7 @@
             </ul>
             <div  v-else-if="block.type === 'callout'" :class="['b-callout', block.variant || 'info']" v-html="hlText(block.text)"></div>
             <div  v-else-if="block.type === 'tools'" class="b-tools">
-              <span class="tools-label">Tools:</span>
+              <span class="tools-label">{{ isSpanish ? 'Herramientas:' : 'Tools:' }}</span>
               <span v-for="t in block.items" :key="t" class="tool-tag" v-html="hlText(t)"></span>
             </div>
           </template>
@@ -156,6 +158,9 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+
+const { isSpanish } = useLanguage()
 
 const activeSection = ref(null)
 const searchQuery = ref('')

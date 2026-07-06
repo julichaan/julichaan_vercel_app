@@ -9,12 +9,20 @@ const router = createRouter({
     {
       path: '/',
       component: Home,
-      meta: { title: `${BASE} | Security Researcher & Bug Bounty Hunter` }
+      meta: {
+        title: {
+          es: `${BASE} | Investigadora de Seguridad y Bug Bounty Hunter`,
+          en: `${BASE} | Security Researcher & Bug Bounty Hunter`,
+        },
+      },
     },
     {
       path: '/certificaciones',
       component: () => import('../views/Certificaciones.vue'),
-      meta: { layout: 'default', title: `Certifications · ${BASE}` }
+      meta: {
+        layout: 'default',
+        title: { es: `Certificaciones · ${BASE}`, en: `Certifications · ${BASE}` },
+      },
     },
     {
       path: '/writeups',
@@ -29,7 +37,7 @@ const router = createRouter({
     {
       path: '/notes',
       component: () => import('../views/Notes.vue'),
-      meta: { layout: 'default', title: `Notes · ${BASE}` }
+      meta: { layout: 'default', title: { es: `Notas · ${BASE}`, en: `Notes · ${BASE}` } }
     },
     {
       path: '/writeup',
@@ -37,10 +45,6 @@ const router = createRouter({
       meta: { title: `Writeup · ${BASE}` }   // no layout → no navbar/footer
     },
   ],
-})
-
-router.afterEach((to) => {
-  document.title = to.meta?.title ?? `${BASE} | Security Researcher`
 })
 
 export default router

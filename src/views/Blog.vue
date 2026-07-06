@@ -4,9 +4,11 @@
     <!-- ── GRID VIEW ──────────────────────────────── -->
     <div v-if="!activePost" class="grid-view">
       <div class="blog-header">
-        <p class="section-pre">// research & analysis</p>
+        <p class="section-pre">{{ isSpanish ? '// investigación y análisis' : '// research & analysis' }}</p>
         <h1 class="section-title">BLOG</h1>
-        <p class="section-sub">Technical write-ups, vulnerability research and security analysis.</p>
+        <p class="section-sub">
+          {{ isSpanish ? 'Artículos técnicos, investigación de vulnerabilidades y análisis de seguridad.' : 'Technical write-ups, vulnerability research and security analysis.' }}
+        </p>
       </div>
 
       <div class="posts-grid">
@@ -36,10 +38,10 @@
     <!-- ── POST VIEW ──────────────────────────────── -->
     <div v-else class="post-view">
       <div class="post-actions">
-        <button class="back-btn" @click="closePost()">← Back to Blog</button>
+        <button class="back-btn" @click="closePost()">{{ isSpanish ? '← Volver al Blog' : '← Back to Blog' }}</button>
         <button class="share-btn" :class="{ copied }" @click="copyLink()">
-          <span v-if="!copied">⎘ Copy link</span>
-          <span v-else>✓ Copied!</span>
+          <span v-if="!copied">{{ isSpanish ? '⎘ Copiar enlace' : '⎘ Copy link' }}</span>
+          <span v-else>{{ isSpanish ? '✓ ¡Copiado!' : '✓ Copied!' }}</span>
         </button>
       </div>
 
@@ -109,11 +111,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useLanguage } from '../composables/useLanguage'
+import blogEsMap from '../data/blog-es-map.json'
 
 const route = useRoute()
 const router = useRouter()
+const { isSpanish } = useLanguage()
 
 const activePost = ref(null)
 const copied = ref(false)
@@ -143,7 +148,7 @@ function copyLink() {
   setTimeout(() => { copied.value = false }, 2000)
 }
 
-const posts = ref([
+const postsEn = ref([
   {
     id: 4,
     title: 'CVE-2026-0257: PAN-OS GlobalProtect Authentication Bypass Under Active Exploitation',
@@ -893,6 +898,37 @@ if os.path.exists(TARGET_CMD):
     ]
   }
 ])
+
+const translateValue = (value) => {
+  if (typeof value === 'string') return blogEsMap[value] ?? value
+  if (Array.isArray(value)) return value.map(translateValue)
+  if (value && typeof value === 'object') {
+    if (value.type === 'code') return value
+    const translated = {}
+    for (const [key, item] of Object.entries(value)) {
+      if (['id', 'cvss', 'url'].includes(key)) {
+        translated[key] = item
+      } else if (['user', 'repo', 'language'].includes(key)) {
+        translated[key] = item
+      } else {
+        translated[key] = translateValue(item)
+      }
+    }
+    return translated
+  }
+  return value
+}
+
+const posts = computed(() => {
+  if (!isSpanish.value) return postsEn.value
+  return postsEn.value.map((post) => translateValue(post))
+})
+
+watch(isSpanish, () => {
+  if (!activePost.value) return
+  const current = posts.value.find((post) => post.id === activePost.value.id)
+  if (current) activePost.value = current
+})
 </script>
 
 <style scoped>

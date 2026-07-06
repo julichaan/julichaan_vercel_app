@@ -1,11 +1,23 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import { useLanguage } from './composables/useLanguage'
 
 const route = useRoute()
 const hasLayout = computed(() => route.meta?.layout === 'default')
+const { language } = useLanguage()
+
+const resolveTitle = (metaTitle) => {
+  if (!metaTitle) return 'julichaan'
+  if (typeof metaTitle === 'string') return metaTitle
+  return metaTitle[language.value] ?? metaTitle.en ?? metaTitle.es ?? 'julichaan'
+}
+
+watch([() => route.meta?.title, language], ([metaTitle]) => {
+  document.title = resolveTitle(metaTitle)
+}, { immediate: true })
 </script>
 
 <template>
