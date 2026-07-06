@@ -4,9 +4,11 @@
     <!-- ── GRID VIEW ──────────────────────────────── -->
     <div v-if="!activePost" class="grid-view">
       <div class="cert-header">
-        <p class="section-pre">// skills & credentials</p>
-        <h1 class="section-title">CERTIFICATIONS</h1>
-        <p class="section-sub">Professional certifications obtained in cybersecurity and penetration testing.</p>
+        <p class="section-pre">{{ isSpanish ? '// habilidades y credenciales' : '// skills & credentials' }}</p>
+        <h1 class="section-title">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h1>
+        <p class="section-sub">
+          {{ isSpanish ? 'Certificaciones profesionales obtenidas en ciberseguridad y pentesting.' : 'Professional certifications obtained in cybersecurity and penetration testing.' }}
+        </p>
       </div>
 
       <div class="certs-grid">
@@ -29,7 +31,9 @@
 
     <!-- ── POST VIEW ──────────────────────────────── -->
     <div v-else class="post-view">
-      <button class="back-btn" @click="activePost = null">← Back to Certifications</button>
+      <button class="back-btn" @click="activePost = null">
+        {{ isSpanish ? '← Volver a Certificaciones' : '← Back to Certifications' }}
+      </button>
 
       <header class="post-header">
         <div class="post-meta-top">
@@ -66,11 +70,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
 
 const activePost = ref(null)
+const { isSpanish } = useLanguage()
 
-const certs = ref([
+const certsByLang = {
+  es: [
+    {
+      id: 1,
+      title: 'Web Red Team Analyst (Web-RTA)',
+      issuer: 'Cyberwarfare Labs',
+      category: 'Certificación',
+      date: '2024',
+      diplomaImg: '/certifications/web-rta/img2.png',
+      tags: ['Pentesting Web', 'Cyberwarfare Labs', 'Web-RTA'],
+      content: [
+        { type: 'callout', variant: 'info', text: 'Web Red Team Analyst (Web-RTA) · Cyberwarfare Labs · Pentesting Web' },
+        { type: 'h2', text: 'Resumen' },
+        { type: 'p', text: 'Esta certificación es de <strong>Cyberwarfare Labs</strong>. Tiene muy buena relación calidad-precio y fue su primera certificación enfocada en pentesting web. Ofrece una base clara sobre vulnerabilidades web comunes.' },
+        { type: 'img', src: '/certifications/web-rta/img1.png', alt: 'Certificación Web-RTA', caption: 'Web Red Team Analyst — Cyberwarfare Labs' },
+        { type: 'h2', text: 'Curso' },
+        { type: 'p', text: 'La parte teórica es accesible y fácil de seguir.' },
+        { type: 'h2', text: 'Examen' },
+        { type: 'p', text: 'El examen incluye varias aplicaciones web con vulnerabilidades encadenables.' },
+        { type: 'p', text: 'Las vulnerabilidades evaluadas aparecen en el curso junto con su enfoque de explotación.' },
+        { type: 'h2', text: 'Veredicto' },
+        { type: 'callout', variant: 'info', text: 'Recomendada para quienes empiezan en pentesting web y quieren una certificación útil, directa y económica.' },
+        { type: 'img', src: '/certifications/web-rta/img2.png', alt: 'Diploma Web-RTA', caption: 'Diploma Web Red Team Analyst' },
+      ],
+    },
+  ],
+  en: [
   {
     id: 1,
     title: 'Web Red Team Analyst (Web-RTA)',
@@ -130,7 +162,16 @@ const certs = ref([
       },
     ]
   }
-])
+  ],
+}
+
+const certs = computed(() => certsByLang[isSpanish.value ? 'es' : 'en'])
+
+watch(isSpanish, () => {
+  if (!activePost.value) return
+  const next = certs.value.find((cert) => cert.id === activePost.value.id)
+  if (next) activePost.value = next
+})
 </script>
 
 <style scoped>

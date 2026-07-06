@@ -1,23 +1,25 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import Live2DAvatar from '../components/Live2DAvatar.vue'
+import { useLanguage } from '../composables/useLanguage'
 
 const typingText = ref('')
-const MSG = 'Welcome to my blog'
+const { isSpanish, toggleLanguage, language } = useLanguage()
 let stopped = false
 
 onMounted(async () => {
   const typeLoop = async () => {
-    for (let i = 0; i <= MSG.length; i++) {
+    const message = isSpanish.value ? 'Bienvenido a mi blog' : 'Welcome to my blog'
+    for (let i = 0; i <= message.length; i++) {
       if (stopped) return
-      typingText.value = MSG.slice(0, i)
+      typingText.value = message.slice(0, i)
       await new Promise(r => setTimeout(r, 80))
     }
     await new Promise(r => setTimeout(r, 2200))
     if (stopped) return
-    for (let i = MSG.length; i >= 0; i--) {
+    for (let i = message.length; i >= 0; i--) {
       if (stopped) return
-      typingText.value = MSG.slice(0, i)
+      typingText.value = message.slice(0, i)
       await new Promise(r => setTimeout(r, 40))
     }
     await new Promise(r => setTimeout(r, 500))
@@ -27,10 +29,19 @@ onMounted(async () => {
 })
 
 onUnmounted(() => { stopped = true })
+
+watch(isSpanish, () => {
+  typingText.value = ''
+})
 </script>
 
 <template>
   <div class="min-h-screen bg-black flex flex-col items-center justify-center gap-8 p-6">
+    <button class="lang-floating" type="button" @click="toggleLanguage">
+      <span>ES</span>
+      <span class="dot" :class="{ en: language === 'en' }"></span>
+      <span>EN</span>
+    </button>
 
     <!-- Prompt título de bienvenida -->
     <div class="font-mono flex flex-wrap items-center justify-center gap-0 select-none text-2xl md:text-3xl lg:text-4xl">
@@ -50,6 +61,43 @@ onUnmounted(() => { stopped = true })
 </template>
 
 <style scoped>
+.lang-floating {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  border: 1px solid #ff003c44;
+  color: #777;
+  background: #000;
+  border-radius: 999px;
+  padding: 0.3rem 0.55rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+}
+.lang-floating .dot {
+  width: 22px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid #ff003c44;
+  position: relative;
+}
+.lang-floating .dot::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff003c;
+  transition: transform 0.15s;
+}
+.lang-floating .dot.en::after {
+  transform: translateX(10px);
+}
+
 /* ── Contenedor TV ── */
 .tv-wrapper {
   position: relative;
@@ -99,4 +147,3 @@ onUnmounted(() => { stopped = true })
   100% { opacity: 1; }
 }
 </style>
-

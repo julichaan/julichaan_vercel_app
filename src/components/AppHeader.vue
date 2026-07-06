@@ -1,9 +1,11 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useLanguage } from '../composables/useLanguage'
 
 const route = useRoute()
 const mobileOpen = ref(false)
+const { isSpanish, toggleLanguage, language } = useLanguage()
 
 // Typing en el logo (comando después del prompt)
 const logoText = ref('')
@@ -32,12 +34,12 @@ onMounted(async () => {
 })
 onUnmounted(() => { stopped = true })
 
-const NAV = [
-  { label: 'Certifications',   path: '/certificaciones' },
-  { label: 'Writeups',         path: '/writeups' },
-  { label: 'Blog',             path: '/blog' },
-  { label: 'Notes',            path: '/notes' },
-]
+const NAV = computed(() => [
+  { label: isSpanish.value ? 'Certificaciones' : 'Certifications', path: '/certificaciones' },
+  { label: 'Writeups', path: '/writeups' },
+  { label: 'Blog', path: '/blog' },
+  { label: isSpanish.value ? 'Notas' : 'Notes', path: '/notes' },
+])
 </script>
 
 <template>
@@ -71,8 +73,21 @@ const NAV = [
         </li>
       </ul>
 
+      <button
+        class="lang-toggle"
+        type="button"
+        :aria-label="isSpanish ? 'Cambiar a inglés' : 'Switch to Spanish'"
+        @click="toggleLanguage"
+      >
+        <span class="lang-label">ES</span>
+        <span class="lang-slider" :class="{ on: language === 'en' }">
+          <span class="lang-knob" />
+        </span>
+        <span class="lang-label">EN</span>
+      </button>
+
       <!-- Hamburger mobile -->
-      <button class="hamburger" @click="mobileOpen = !mobileOpen" aria-label="Menú">
+      <button class="hamburger" @click="mobileOpen = !mobileOpen" :aria-label="isSpanish ? 'Menú' : 'Menu'">
         <span :class="{ open: mobileOpen }" />
         <span :class="{ open: mobileOpen }" />
         <span :class="{ open: mobileOpen }" />
@@ -92,6 +107,9 @@ const NAV = [
         >
           <span style="color:#ff003c">›</span> {{ item.label }}
         </router-link>
+        <button class="mobile-lang-toggle" type="button" @click="toggleLanguage">
+          <span style="color:#ff003c">›</span> {{ isSpanish ? 'Cambiar a inglés' : 'Switch to Spanish' }}
+        </button>
       </div>
     </Transition>
   </header>
@@ -157,6 +175,50 @@ const NAV = [
   padding: 0;
   gap: 0.25rem;
   margin-left: auto;
+}
+
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.75rem;
+  background: transparent;
+  border: 1px solid #ff003c22;
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+  color: #666;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.lang-toggle:hover {
+  color: #ff003c;
+  border-color: #ff003c66;
+}
+.lang-label {
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.lang-slider {
+  width: 30px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid #ff003c44;
+  display: flex;
+  align-items: center;
+  padding: 1px;
+  transition: border-color 0.15s;
+}
+.lang-knob {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff003c;
+  transform: translateX(0);
+  transition: transform 0.15s;
+}
+.lang-slider.on .lang-knob {
+  transform: translateX(14px);
 }
 
 .nav-link {
@@ -240,6 +302,23 @@ const NAV = [
   color: #ff003c;
   padding-left: 16px;
 }
+.mobile-lang-toggle {
+  margin-top: 0.35rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font: inherit;
+  color: #888;
+  padding: 10px 8px;
+  border-bottom: 1px solid #ff003c11;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  gap: 10px;
+}
+.mobile-lang-toggle:hover {
+  color: #ff003c;
+}
 
 /* Transición mobile menu */
 .mobile-menu-enter-active,
@@ -255,6 +334,7 @@ const NAV = [
 /* Responsive */
 @media (max-width: 640px) {
   .desktop-nav,
+  .lang-toggle,
   .terminal-btn { display: none; }
   .hamburger    { display: flex; }
   .logo { font-size: 0.85rem; }

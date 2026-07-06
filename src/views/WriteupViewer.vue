@@ -2,12 +2,14 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { marked } from 'marked'
+import { useLanguage } from '../composables/useLanguage'
 
 const route   = useRoute()
 const html    = ref('')
 const title   = ref('')
 const loading = ref(true)
 const error   = ref('')
+const { isSpanish } = useLanguage()
 
 // Custom marked renderer for images → figure + figcaption
 const renderer = new marked.Renderer()
@@ -22,7 +24,7 @@ marked.use({ renderer })
 onMounted(async () => {
   const file = route.query.file
   if (!file) {
-    error.value = 'No file parameter specified.'
+    error.value = isSpanish.value ? 'No se especificó el parámetro del archivo.' : 'No file parameter specified.'
     loading.value = false
     return
   }
@@ -35,7 +37,7 @@ onMounted(async () => {
     if (h1) title.value = h1[1]
     html.value = marked.parse(md)
   } catch (e) {
-    error.value = `Failed to load writeup: ${e.message}`
+    error.value = isSpanish.value ? `No se pudo cargar el writeup: ${e.message}` : `Failed to load writeup: ${e.message}`
   } finally {
     loading.value = false
   }
@@ -48,7 +50,7 @@ onMounted(async () => {
     <!-- Loading -->
     <div v-if="loading" class="viewer-state">
       <span class="state-dot blink"></span>
-      <span>Loading writeup...</span>
+      <span>{{ isSpanish ? 'Cargando writeup...' : 'Loading writeup...' }}</span>
     </div>
 
     <!-- Error -->

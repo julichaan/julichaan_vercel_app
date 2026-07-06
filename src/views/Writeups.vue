@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
 
 // ── Terminal state ───────────────────────────────────────────────
 const input        = ref('')
@@ -10,7 +11,8 @@ const sidebarOpen  = ref(false)
 const openNodes    = ref(new Set(['writeups']))
 const activeFile   = ref(null)   // { name, folder, mdFile, viewerUrl }
 
-const PROMPT = 'visitor@blog:~/writeups$'
+const { isSpanish } = useLanguage()
+const PROMPT = computed(() => (isSpanish.value ? 'visitante@blog:~/writeups$' : 'visitor@blog:~/writeups$'))
 
 // ── Filesystem ───────────────────────────────────────────────────
 const FS = {
@@ -128,7 +130,7 @@ function lsOutput(args) {
     if (!target) {
       return [
         { text: '', type: 'output' },
-        { text: `  ls: cannot access '${arg}': No such file or directory`, type: 'error' },
+        { text: isSpanish.value ? `  ls: no se puede acceder a '${arg}': No existe el archivo o directorio` : `  ls: cannot access '${arg}': No such file or directory`, type: 'error' },
         { text: '', type: 'output' },
       ]
     }
@@ -141,7 +143,7 @@ function lsOutput(args) {
       })
     }
     lines.push({ text: '', type: 'output' })
-    lines.push({ text: `  ${target.children.length} file${target.children.length !== 1 ? 's' : ''}`, type: 'muted' })
+    lines.push({ text: isSpanish.value ? `  ${target.children.length} archivo${target.children.length !== 1 ? 's' : ''}` : `  ${target.children.length} file${target.children.length !== 1 ? 's' : ''}`, type: 'muted' })
     lines.push({ text: '', type: 'output' })
     return lines
   }
@@ -159,7 +161,7 @@ function lsOutput(args) {
 
   const totalFiles = dirs.reduce((s, d) => s + d.children.length, 0)
   lines.push({ text: '', type: 'output' })
-  lines.push({ text: `  ${dirs.length} directories, ${totalFiles} file${totalFiles !== 1 ? 's' : ''}`, type: 'muted' })
+  lines.push({ text: isSpanish.value ? `  ${dirs.length} directorios, ${totalFiles} archivo${totalFiles !== 1 ? 's' : ''}` : `  ${dirs.length} directories, ${totalFiles} file${totalFiles !== 1 ? 's' : ''}`, type: 'muted' })
   lines.push({ text: '', type: 'output' })
   return lines
 }
@@ -170,17 +172,17 @@ const COMMANDS = {
     action: () => [
       { text: '', type: 'output' },
       { text: '  ┌──────────────────────────────────────────────┐', type: 'border' },
-      { text: '  │              AVAILABLE COMMANDS               │', type: 'border' },
+      { text: isSpanish.value ? '  │             COMANDOS DISPONIBLES             │' : '  │              AVAILABLE COMMANDS               │', type: 'border' },
       { text: '  └──────────────────────────────────────────────┘', type: 'border' },
       { text: '', type: 'output' },
-      { text: '  help            →  Show this command list',             type: 'output' },
-      { text: '  ls [dir]        →  List writeup directory structure',   type: 'output' },
-      { text: '  cat <file>      →  Open and read a writeup',            type: 'output' },
-      { text: '  show            →  Open the file explorer sidebar',     type: 'output' },
-      { text: '  hide            →  Close the file explorer sidebar',    type: 'output' },
-      { text: '  clear           →  Clear the terminal',                 type: 'output' },
+      { text: isSpanish.value ? '  help            →  Mostrar esta lista de comandos' : '  help            →  Show this command list', type: 'output' },
+      { text: isSpanish.value ? '  ls [dir]        →  Listar estructura de writeups' : '  ls [dir]        →  List writeup directory structure', type: 'output' },
+      { text: isSpanish.value ? '  cat <file>      →  Abrir y leer un writeup' : '  cat <file>      →  Open and read a writeup', type: 'output' },
+      { text: isSpanish.value ? '  show            →  Abrir el explorador lateral' : '  show            →  Open the file explorer sidebar', type: 'output' },
+      { text: isSpanish.value ? '  hide            →  Cerrar el explorador lateral' : '  hide            →  Close the file explorer sidebar', type: 'output' },
+      { text: isSpanish.value ? '  clear           →  Limpiar la terminal' : '  clear           →  Clear the terminal', type: 'output' },
       { text: '', type: 'output' },
-      { text: '  Example: cat Active.md  |  cat HTB/Active.md', type: 'muted' },
+      { text: isSpanish.value ? '  Ejemplo: cat Active.md  |  cat HTB/Active.md' : '  Example: cat Active.md  |  cat HTB/Active.md', type: 'muted' },
       { text: '', type: 'output' },
     ]
   },
@@ -190,7 +192,7 @@ const COMMANDS = {
       if (!args?.trim()) {
         return [
           { text: '', type: 'output' },
-          { text: '  Usage: cat <filename.md>  e.g. cat Active.md', type: 'error' },
+          { text: isSpanish.value ? '  Uso: cat <archivo.md>  ej. cat Active.md' : '  Usage: cat <filename.md>  e.g. cat Active.md', type: 'error' },
           { text: '', type: 'output' },
         ]
       }
@@ -198,7 +200,7 @@ const COMMANDS = {
       if (!file) {
         return [
           { text: '', type: 'output' },
-          { text: `  cat: ${args}: No such file`, type: 'error' },
+          { text: isSpanish.value ? `  cat: ${args}: No existe ese archivo` : `  cat: ${args}: No such file`, type: 'error' },
           { text: '', type: 'output' },
         ]
       }
@@ -206,7 +208,7 @@ const COMMANDS = {
       openWriteup(file.name, folder, file.mdFile)
       return [
         { text: '', type: 'output' },
-        { text: `  [ OPEN ] Opening ${file.name}...`, type: 'success' },
+        { text: isSpanish.value ? `  [ OPEN ] Abriendo ${file.name}...` : `  [ OPEN ] Opening ${file.name}...`, type: 'success' },
         { text: '', type: 'output' },
       ]
     }
@@ -216,7 +218,7 @@ const COMMANDS = {
       sidebarOpen.value = true
       return [
         { text: '', type: 'output' },
-        { text: '  [ EXPLORER ] File explorer opened.', type: 'success' },
+        { text: isSpanish.value ? '  [ EXPLORER ] Explorador abierto.' : '  [ EXPLORER ] File explorer opened.', type: 'success' },
         { text: '', type: 'output' },
       ]
     }
@@ -226,7 +228,7 @@ const COMMANDS = {
       sidebarOpen.value = false
       return [
         { text: '', type: 'output' },
-        { text: '  [ EXPLORER ] Closed.', type: 'muted' },
+        { text: isSpanish.value ? '  [ EXPLORER ] Cerrado.' : '  [ EXPLORER ] Closed.', type: 'muted' },
         { text: '', type: 'output' },
       ]
     }
@@ -244,7 +246,7 @@ const focusInput = () => inputRef.value?.focus()
 
 const handleCommand = async () => {
   const raw  = input.value.trim()
-  outputLines.value.push({ text: `${PROMPT} ${raw}`, type: 'prompt' })
+  outputLines.value.push({ text: `${PROMPT.value} ${raw}`, type: 'prompt' })
 
   if (raw === '') { input.value = ''; await scrollToBottom(); return }
 
@@ -260,7 +262,7 @@ const handleCommand = async () => {
   } else {
     outputLines.value.push(
       { text: '', type: 'output' },
-      { text: `  command not found: '${raw}'. Type 'help'.`, type: 'error' },
+      { text: isSpanish.value ? `  comando no encontrado: '${raw}'. Escribe 'help'.` : `  command not found: '${raw}'. Type 'help'.`, type: 'error' },
       { text: '', type: 'output' },
     )
   }
@@ -286,8 +288,8 @@ onMounted(async () => {
       { text: '╚███╔███╔╝██║  ██║██║   ██║   ███████╗╚██████╔╝██║     ███████║', type: 'ascii' },
       { text: ' ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝   ╚═╝   ╚══════╝ ╚═════╝ ╚═╝     ╚══════╝', type: 'ascii' },
       { text: '', type: 'output' },
-      { text: '  CTF, HackTheBox and Bug Bounty writeups.', type: 'muted' },
-      { text: '  Type "help" to see available commands.', type: 'muted' },
+      { text: isSpanish.value ? '  Writeups de CTF, HackTheBox y Bug Bounty.' : '  CTF, HackTheBox and Bug Bounty writeups.', type: 'muted' },
+      { text: isSpanish.value ? '  Escribe "help" para ver comandos disponibles.' : '  Type "help" to see available commands.', type: 'muted' },
       { text: '', type: 'output' },
     ]
     await nextTick()
@@ -311,7 +313,7 @@ onUnmounted(() => {
           <div class="fs-header">
             <span class="fs-icon">◈</span>
             <span class="fs-title">EXPLORER</span>
-            <button class="fs-close" @click="sidebarOpen = false" title="hide">✕</button>
+            <button class="fs-close" @click="sidebarOpen = false" :title="isSpanish ? 'ocultar' : 'hide'">✕</button>
           </div>
           <div class="fs-body">
             <div
@@ -338,7 +340,7 @@ onUnmounted(() => {
             <span class="dot dot-red"></span>
             <span class="dot dot-yellow"></span>
             <span class="dot dot-green"></span>
-            <span class="titlebar-label">visitor@blog: ~/writeups</span>
+            <span class="titlebar-label">{{ isSpanish ? 'visitante@blog: ~/writeups' : 'visitor@blog: ~/writeups' }}</span>
           </div>
           <div ref="outputRef" class="terminal-body">
             <div v-for="(line, i) in outputLines" :key="i" class="line" :class="line.type">
@@ -356,7 +358,7 @@ onUnmounted(() => {
           </div>
         </div>
         <p class="hint">
-          Try <span class="hint-cmd">ls</span>,
+          {{ isSpanish ? 'Prueba' : 'Try' }} <span class="hint-cmd">ls</span>,
           <span class="hint-cmd">cat Active.md</span>,
           <span class="hint-cmd">show</span>
         </p>
@@ -379,12 +381,12 @@ onUnmounted(() => {
               <span class="path-name"> {{ activeFile.name }}</span>
             </span>
             <div class="modal-actions">
-              <button class="modal-btn" @click="openFullscreen" title="Open in new tab">
+              <button class="modal-btn" @click="openFullscreen" :title="isSpanish ? 'Abrir en una pestaña nueva' : 'Open in new tab'">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
                 </svg>
               </button>
-              <button class="modal-btn modal-close-btn" @click="activeFile = null" title="Close (Esc)">✕</button>
+              <button class="modal-btn modal-close-btn" @click="activeFile = null" :title="isSpanish ? 'Cerrar (Esc)' : 'Close (Esc)'">✕</button>
             </div>
           </div>
 
