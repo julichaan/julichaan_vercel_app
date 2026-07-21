@@ -150,6 +150,239 @@ function copyLink() {
 
 const postsEn = ref([
   {
+    id: 6,
+    title: 'From Bing Search to Akira: BumbleBee + AdaptixC2 Intrusion Deep Dive (DFIR Report)',
+    excerpt: 'Exhaustive analysis of the DFIR Report case where SEO poisoning delivered BumbleBee, AdaptixC2 enabled hands-on-keyboard operations, and Akira ransomware impacted both root and child domains. Includes timeline, TTP mapping, IOCs, and defender actions.',
+    date: 'July 2026',
+    category: 'Threat Intelligence',
+    author: 'julichaan',
+    readTime: '14 min read',
+    tags: ['BumbleBee', 'AdaptixC2', 'Akira', 'SEO Poisoning', 'Ransomware', 'DFIR'],
+    content: [
+      {
+        type: 'callout', variant: 'info',
+        text: 'DFIR Report Case Study · Initial access via Bing SEO poisoning · Trojanized ManageEngine/Advanced IP Scanner installers · BumbleBee loader + AdaptixC2 beacon · RustDesk and reverse SSH tunneling · Akira ransomware final stage'
+      },
+      {
+        type: 'h2', text: '1. Executive Summary'
+      },
+      {
+        type: 'p',
+        text: 'The DFIR Report investigation documents a full-spectrum enterprise intrusion that started with a <strong>Bing SEO poisoning lure</strong> and ended in <strong>Akira ransomware deployment</strong>. The campaign chained social engineering, DLL side-loading, process injection, domain privilege abuse, credential theft, large-scale exfiltration, and multi-domain encryption.'
+      },
+      {
+        type: 'table',
+        headers: ['Phase', 'Observed in Case'],
+        rows: [
+          ['Initial access', 'User searched for ManageEngine OpManager in Bing and downloaded a trojanized MSI from lookalike infrastructure'],
+          ['Malware staging', 'BumbleBee loader executed via consent.exe + malicious msimg32.dll DLL side-loading'],
+          ['C2 and control', 'AdaptixC2 beacon injected into renamed WAB.exe (AdgNsy.exe) for hands-on-keyboard operations'],
+          ['Privilege and lateral movement', 'Creation of backup_DA/backup_EA accounts, Enterprise Admin group abuse, RDP pivots, RustDesk, reverse SSH tunnel'],
+          ['Credential access', 'NTDS.dit collection with wbadmin, Veeam credential extraction, remote LSASS dumping (lsassy tradecraft)'],
+          ['Collection, exfiltration, impact', 'FileZilla SFTP exfiltration (~77 GB) followed by Akira encryption and shadow copy deletion'],
+        ]
+      },
+      {
+        type: 'h2', text: '2. Initial Access: SEO Poisoning Through Fake Software Portals'
+      },
+      {
+        type: 'p',
+        text: 'The intrusion began when an IT user searched Bing for ManageEngine OpManager and was redirected through attacker-controlled lookalike sites, including <code>opmanager[.]pro</code> and <code>download-center[.]online</code>. The downloaded installer appeared legitimate but delivered malware alongside expected software artifacts.'
+      },
+      {
+        type: 'p',
+        text: 'This is operationally important: the actor targeted <strong>administrative personas</strong> likely to run installers on sensitive systems, increasing the probability of immediate privileged access and rapid domain reach.'
+      },
+      {
+        type: 'h3', text: 'Campaign Architecture Observed by DFIR Report'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Tier 1 (Impersonation front-end):</strong> Search-visible clone pages for enterprise tools.',
+          '<strong>Tier 2 (Delivery gateway):</strong> Shared backend infrastructure serving trojanized MSI payloads via <code>/Get?q=</code> patterns.',
+          '<strong>Operational overlap:</strong> Reused hosting patterns and signing themes across multiple software impersonation waves.',
+        ]
+      },
+      {
+        type: 'h2', text: '3. BumbleBee Execution: DLL Side-Loading as the Beachhead'
+      },
+      {
+        type: 'p',
+        text: 'The malicious MSI dropped a staging set that enabled DLL search-order hijacking. A legitimate <code>consent.exe</code> binary was executed from a user-writable path, forcing it to load the local malicious <code>msimg32.dll</code> instead of the genuine System32 library.'
+      },
+      {
+        type: 'p',
+        text: 'Once loaded, BumbleBee performed geofencing checks against CIS-region locales and initiated DGA-based C2 resolution. This combination reduces unwanted infections and complicates static domain blocking.'
+      },
+      {
+        type: 'code',
+        text:
+`Trojanized MSI execution
+        ↓
+Drops consent.exe + malicious msimg32.dll
+        ↓
+consent.exe launched from writable directory
+        ↓
+DLL side-loading executes BumbleBee loader
+        ↓
+Locale geofencing + DGA domain resolution
+        ↓
+Initial C2 established`
+      },
+      {
+        type: 'h2', text: '4. AdaptixC2 Delivery via Process Injection'
+      },
+      {
+        type: 'p',
+        text: 'Roughly five hours after initial infection, the actor deployed <code>AdgNsy.exe</code>, a renamed Windows Address Book binary (<code>WAB.exe</code>), and injected AdaptixC2 shellcode. Execution was observed through WMI parentage (<code>WmiPrvSE.exe</code>), aligning with stealthy remote orchestration.'
+      },
+      {
+        type: 'p',
+        text: 'Memory artifacts showed unbacked execution regions and RWX pages, while configuration strings for AdaptixC2 were recovered from process memory rather than static disk content, strongly supporting live post-execution injection.'
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'Key defender takeaway: signed or legitimate process names (for example WAB.exe) are not sufficient trust anchors when process ancestry, memory permissions, and thread start addresses indicate injection.'
+      },
+      {
+        type: 'h2', text: '5. Privilege Expansion and Persistence in Active Directory'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Domain account creation:</strong> <code>backup_DA</code> and <code>backup_EA</code> created via <code>net user</code>.',
+          '<strong>Enterprise Admin escalation:</strong> <code>backup_EA</code> added to <code>enterprise admins</code>.',
+          '<strong>Remote access persistence:</strong> RustDesk installed as a Windows service on multiple servers.',
+          '<strong>Account manipulation:</strong> Administrator password resets and domain administrator account re-enablement observed during later stages.',
+        ]
+      },
+      {
+        type: 'p',
+        text: 'The actor strategy favored durable identity control over one-shot exploitation: once privileged accounts were established, the operation scaled quickly across DC, backup, and file server roles.'
+      },
+      {
+        type: 'h2', text: '6. Credential Access: NTDS.dit, Veeam, and LSASS'
+      },
+      {
+        type: 'h3', text: 'NTDS.dit and Registry Hive Collection'
+      },
+      {
+        type: 'p',
+        text: 'Using <code>wbadmin.exe</code>, the actor created backup material containing <code>ntds.dit</code> and SYSTEM/SECURITY hives, then staged data for offline credential extraction.'
+      },
+      {
+        type: 'h3', text: 'Veeam Credential Database Theft'
+      },
+      {
+        type: 'p',
+        text: 'The actor queried the Veeam PostgreSQL database with <code>psql.exe</code> and used encoded PowerShell with DPAPI decryption logic to recover stored credentials, including handling for legacy and newer Veeam formats.'
+      },
+      {
+        type: 'h3', text: 'Remote LSASS Dumping'
+      },
+      {
+        type: 'p',
+        text: 'DFIR Report observed lsassy-like tradecraft: rapid sequential remote execution paths (SMB, WMI, Scheduled Tasks, DCOM) and <code>comsvcs.dll</code> MiniDump usage via <code>rundll32.exe</code>, with dumps staged in <code>\\Windows\\Temp</code> under randomized deceptive extensions.'
+      },
+      {
+        type: 'h2', text: '7. Lateral Movement and Tunneling Tradecraft'
+      },
+      {
+        type: 'p',
+        text: 'Lateral movement was dominated by <strong>RDP</strong>, amplified by remote admin tooling (RustDesk) and tunneling. A reverse SSH tunnel (for example <code>ssh ... -R *:10400 -p22</code>) enabled the actor to bridge external infrastructure to internal RDP paths while bypassing perimeter expectations.'
+      },
+      {
+        type: 'p',
+        text: 'In the parallel Swisscom case, cloudflared tunneling and BYOVD activity were also observed, showing campaign flexibility in defense evasion depending on environment constraints.'
+      },
+      {
+        type: 'h2', text: '8. Collection and Exfiltration: Why the 77 GB Matters'
+      },
+      {
+        type: 'p',
+        text: 'The actor performed broad collection discovery across credential stores, browser profiles, cloud credential directories, source code paths, and remote administration artifacts. Event ID 5145 telemetry captured extensive share-level probing behavior.'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Initial tunnel-linked transfer:</strong> About 2.5 GB moved from a domain controller to <code>193.242.184[.]150</code> over SSH after reverse tunnel establishment.',
+          '<strong>Primary exfiltration channel:</strong> FileZilla over SFTP to <code>185.174.100[.]203:22</code>.',
+          '<strong>Volume:</strong> Two major sessions totaling roughly 77 GB (about 39.28 GB and 41.77 GB).',
+          '<strong>Likely data focus:</strong> SYSVOL, credential material, user and share data relevant for resale and follow-on operations.',
+        ]
+      },
+      {
+        type: 'h2', text: '9. Impact Stage: Akira Ransomware Deployment'
+      },
+      {
+        type: 'p',
+        text: 'Approximately 44 hours after initial access, the actor launched Akira (for example <code>locker.exe</code>) beginning with high-value servers and then expanding coverage. On day five, the actor returned and executed repeated encryption activity in a child domain, demonstrating staged multi-domain impact operations.'
+      },
+      {
+        type: 'p',
+        text: 'A recurring post-execution pattern was shadow copy destruction through WMI-triggered PowerShell, limiting recovery options and increasing operational disruption.'
+      },
+      {
+        type: 'code',
+        text: `powershell.exe -Command "Get-WmiObject Win32_Shadowcopy | Remove-WmiObject"`
+      },
+      {
+        type: 'h2', text: '10. Detection Priorities and Practical Hunting'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Initial access and execution:</strong> MSI installs from unusual paths, <code>consent.exe</code> launched outside System32, and near-immediate loads of local <code>msimg32.dll</code>.',
+          '<strong>Injection patterns:</strong> <code>WmiPrvSE.exe</code> spawning suspicious binaries followed by ProcessAccess events and RWX memory regions.',
+          '<strong>Identity abuse:</strong> Rapid creation of domain accounts plus immediate privileged group modifications.',
+          '<strong>Credential theft telemetry:</strong> <code>wbadmin</code> access to NTDS paths, <code>psql.exe</code> queries on VeeamBackup, <code>rundll32 comsvcs.dll</code> dumps.',
+          '<strong>Tunneling and exfiltration:</strong> Reverse SSH <code>-R</code> command lines, RustDesk service installs, and large SFTP flows from internal admin hosts.',
+          '<strong>Ransomware precursor signals:</strong> Service tampering, repeated remote execution waves, and shadow copy deletion commands.',
+        ]
+      },
+      {
+        type: 'h2', text: '11. Selected IOCs from the Report'
+      },
+      {
+        type: 'table',
+        headers: ['Indicator Type', 'Value'],
+        rows: [
+          ['Initial lure domains', 'opmanager[.]pro, download-center[.]online'],
+          ['BumbleBee C2 domains', 'ev2sirbd269o5j[.]org, 2rxyt8yrhq0bgj[.]org, d1hmxkpwby0d4s[.]org'],
+          ['BumbleBee/loader IPs', '109.205.195[.]211, 188.40.187[.]145, 171.22.183[.]43'],
+          ['AdaptixC2 IP', '172.96.137[.]160'],
+          ['Reverse SSH endpoint', '193.242.184[.]150'],
+          ['Exfiltration server', '185.174.100[.]203'],
+          ['Dropped/abused binaries', 'ManageEngine-OpManager.msi, consent.exe, msimg32.dll, AdgNsy.exe, locker.exe'],
+        ]
+      },
+      {
+        type: 'h2', text: '12. Strategic Lessons for Defenders'
+      },
+      {
+        type: 'p',
+        text: 'This intrusion is a model of modern ransomware operations where <strong>initial malware delivery is only the opener</strong>. The decisive phases are identity compromise, covert remote access normalization, and disciplined data theft before encryption.'
+      },
+      {
+        type: 'p',
+        text: 'Defenders should treat SEO-driven software downloads for admin tools as a high-risk channel, harden privilege workflows, and correlate endpoint identity telemetry with network exfiltration behavior. The objective is not only to block ransomware execution, but to break the kill chain at credential abuse and operator persistence stages.'
+      },
+      {
+        type: 'h2', text: 'References'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<a href="https://thedfirreport.com/2026/06/29/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-3/" target="_blank">The DFIR Report — From Bing Search to Ransomware: BumbleBee and AdaptixC2 Deliver Akira</a>',
+          '<a href="https://thedfirreport.com/2025/08/05/from-bing-search-to-ransomware-bumblebee-and-adaptixc2-deliver-akira-2/" target="_blank">The DFIR Report Flash Alert (2025) — Related campaign activity</a>',
+          '<a href="https://www.cyjax.com/resources/blog/a-sting-on-bing-bumblebee-delivered-through-bing-seo-poisoning-campaign" target="_blank">Cyjax — BumbleBee SEO poisoning campaign context</a>',
+          '<a href="https://unit42.paloaltonetworks.com/adaptixc2-post-exploitation-framework/" target="_blank">Unit42 — AdaptixC2 framework analysis</a>',
+        ]
+      },
+    ]
+  },
+  {
     id: 5,
     title: 'ClickFix 2026 + EtherHiding: Fake CAPTCHA Delivery with On-Chain C2 Rotation',
     excerpt: 'Analysis of an active 2026 ClickFix campaign abusing fake CAPTCHA lures and clipboard hijacking, with C2 discovery delegated to a Polygon smart contract (EtherHiding). Includes attack-chain breakdown, durable IOCs, and defender playbook.',
