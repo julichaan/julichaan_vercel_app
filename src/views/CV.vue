@@ -48,7 +48,7 @@ const experience = computed(() => isSpanish.value ? [
     desc: 'Pentesting web y de infraestructura para clientes PYME. Informes técnicos y ejecutivos. Hardening de servidores Linux.',
   },
   {
-    role: 'Becaria de Desarrollo',
+    role: 'Becario de Desarrollo',
     company: 'StartupXYZ',
     period: '2021 — 2022',
     desc: 'Desarrollo frontend con Vue.js. Primer contacto con DevSecOps e integración de SAST en CI/CD.',
@@ -135,14 +135,14 @@ watch(titleMessage, () => {
 <template>
   <div class="font-mono bg-black text-gray-300 min-h-screen">
     <div class="max-w-5xl mx-auto px-6 py-14">
-      <header class="mb-12 pb-8 border-b" style="border-color:#ff003c33">
+      <header class="mb-12 pb-8 border-b text-center" style="border-color:#ff003c33">
         <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// cv</p>
 
         <h1 class="text-5xl md:text-6xl font-black tracking-widest mb-4" style="color:#ff003c">
           {{ profile.name }}
         </h1>
 
-        <div class="flex flex-wrap items-center gap-0 text-lg md:text-xl mb-5 select-none">
+        <div class="flex flex-wrap items-center justify-center gap-0 text-lg md:text-xl mb-5 select-none">
           <span style="color:#ff003c">julichaan</span>
           <span class="text-gray-600">@</span>
           <span style="color:#ff003c">cv</span>
@@ -151,7 +151,7 @@ watch(titleMessage, () => {
           <span class="animate-pulse" style="color:#00ff9f">▌</span>
         </div>
 
-        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs" style="color:#555">
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs" style="color:#555">
           <span>📍 {{ profile.location }}</span>
           <a :href="'mailto:' + profile.email" class="hover:text-gray-300 transition-colors">✉ {{ profile.email }}</a>
           <a :href="'https://' + profile.github" target="_blank" rel="noopener" class="hover:text-gray-300 transition-colors">⌥ {{ profile.github }}</a>
@@ -159,7 +159,7 @@ watch(titleMessage, () => {
         </div>
       </header>
 
-      <div class="cv-grid">
+      <div class="cv-grid max-w-4xl mx-auto">
         <div class="space-y-10">
           <section>
             <h2 class="section-title">{{ isSpanish ? 'SOBRE MÍ' : 'ABOUT ME' }}</h2>
@@ -244,12 +244,6 @@ watch(titleMessage, () => {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2.5rem;
-}
-@media (min-width: 768px) {
-  .cv-grid {
-    grid-template-columns: 3fr 2fr;
-    gap: 3rem;
-  }
 }
 
 .section-title {
