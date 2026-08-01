@@ -312,20 +312,20 @@ watch(titleMessage, () => {
 @media (min-width: 1200px) {
   .cv-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.9fr) minmax(330px, 1fr);
-    gap: 2.25rem;
+    grid-template-columns: minmax(0, 1.95fr) minmax(320px, 1fr);
+    gap: 2rem;
     align-items: start;
   }
 }
 
 .sidebar-panel {
-  padding-top: 0.25rem;
+  padding-top: 0;
 }
 
 @media (min-width: 1200px) {
   .sidebar-panel {
     position: sticky;
-    top: 1.5rem;
+    top: 5.25rem;
   }
 }
 
@@ -385,7 +385,13 @@ watch(titleMessage, () => {
 
 @media (min-width: 1024px) {
   .grid-certifications {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1400px) {
+  .grid-certifications {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -399,7 +405,8 @@ watch(titleMessage, () => {
 
 .cert-image {
   width: 100%;
-  height: auto;
+  height: 120px;
+  object-fit: contain;
   border-radius: 3px;
   border: 1px solid #ffffff14;
 }
