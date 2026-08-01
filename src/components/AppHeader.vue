@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage'
 
@@ -11,28 +11,54 @@ const { isSpanish, toggleLanguage, language } = useLanguage()
 const logoText = ref('')
 const COMMANDS = ['whoami', 'ls -la', 'ssh julichaan@blog', 'nmap -sV target', './exploit.py']
 let stopped = false
+const isTabVisible = ref(true)
+let runId = 0
 
-onMounted(async () => {
+const onVisibility = () => {
+  isTabVisible.value = !document.hidden
+}
+
+const startTyping = () => {
+  runId += 1
+  const currentRun = runId
+
   const typeLoop = async () => {
+    if (stopped || !isTabVisible.value || currentRun !== runId) return
     for (const cmd of COMMANDS) {
       for (let i = 0; i <= cmd.length; i++) {
-        if (stopped) return
+        if (stopped || !isTabVisible.value || currentRun !== runId) return
         logoText.value = cmd.slice(0, i)
         await new Promise(r => setTimeout(r, 80))
       }
       await new Promise(r => setTimeout(r, 1600))
       for (let i = cmd.length; i >= 0; i--) {
-        if (stopped) return
+        if (stopped || !isTabVisible.value || currentRun !== runId) return
         logoText.value = cmd.slice(0, i)
         await new Promise(r => setTimeout(r, 40))
       }
       await new Promise(r => setTimeout(r, 300))
     }
-    if (!stopped) typeLoop()
+    if (!stopped && isTabVisible.value && currentRun === runId) typeLoop()
   }
+
   typeLoop()
+}
+
+onMounted(async () => {
+  onVisibility()
+  document.addEventListener('visibilitychange', onVisibility)
+  startTyping()
 })
-onUnmounted(() => { stopped = true })
+onUnmounted(() => {
+  stopped = true
+  runId += 1
+  document.removeEventListener('visibilitychange', onVisibility)
+})
+
+watch(isTabVisible, (visible) => {
+  if (!visible || stopped) return
+  startTyping()
+})
 
 const NAV = computed(() => [
   { label: isSpanish.value ? 'Sobre mí' : 'About', path: '/about' },
@@ -329,6 +355,26 @@ const NAV = computed(() => [
 .mobile-menu-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    backdrop-filter: none;
+  }
+
+  .glitch-bar {
+    animation: none;
+    background: #ff003c55;
+  }
+
+  .logo-cursor,
+  .nav-link,
+  .mobile-link,
+  .lang-toggle,
+  .lang-knob {
+    animation: none !important;
+    transition: none;
+  }
 }
 
 /* Responsive */

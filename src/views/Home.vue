@@ -8,25 +8,30 @@ const typingText = ref('')
 const { isSpanish, toggleLanguage, language } = useLanguage()
 let stopped = false
 let runId = 0
+const isTabVisible = ref(true)
+const onVisibility = () => {
+  isTabVisible.value = !document.hidden
+}
 
 const welcomeMessage = computed(() => (isSpanish.value ? 'Bienvenido a mi blog' : 'Welcome to my blog'))
 
 const typeLoop = async (id) => {
+  if (!isTabVisible.value) return
   const message = welcomeMessage.value
   for (let i = 0; i <= message.length; i++) {
-    if (stopped || id !== runId) return
+    if (stopped || id !== runId || !isTabVisible.value) return
     typingText.value = message.slice(0, i)
     await new Promise(r => setTimeout(r, 80))
   }
   await new Promise(r => setTimeout(r, 2200))
-  if (stopped || id !== runId) return
+  if (stopped || id !== runId || !isTabVisible.value) return
   for (let i = message.length; i >= 0; i--) {
-    if (stopped || id !== runId) return
+    if (stopped || id !== runId || !isTabVisible.value) return
     typingText.value = message.slice(0, i)
     await new Promise(r => setTimeout(r, 40))
   }
   await new Promise(r => setTimeout(r, 500))
-  if (!stopped && id === runId) typeLoop(id)
+  if (!stopped && id === runId && isTabVisible.value) typeLoop(id)
 }
 
 const startTyping = () => {
@@ -36,13 +41,24 @@ const startTyping = () => {
 }
 
 onMounted(async () => {
+  onVisibility()
+  document.addEventListener('visibilitychange', onVisibility)
   startTyping()
 })
 
-onUnmounted(() => { stopped = true; runId += 1 })
+onUnmounted(() => {
+  stopped = true
+  runId += 1
+  document.removeEventListener('visibilitychange', onVisibility)
+})
 
 watch(welcomeMessage, () => {
   if (stopped) return
+  startTyping()
+})
+
+watch(isTabVisible, (visible) => {
+  if (!visible || stopped) return
   startTyping()
 })
 </script>

@@ -7,6 +7,11 @@ const { isSpanish } = useLanguage()
 const typingText = ref('')
 const stopped = ref(false)
 let runId = 0
+const isTabVisible = ref(true)
+
+const onVisibility = () => {
+  isTabVisible.value = !document.hidden
+}
 
 const titleMessage = computed(() => (
   isSpanish.value ? 'Ingeniero IT, threat hunter y ethical hacker' : 'IT Engineer, Threat Hunter & Ethical Hacker'
@@ -157,36 +162,45 @@ const startTyping = () => {
   typingText.value = ''
 
   const typeLoop = async () => {
+    if (!isTabVisible.value) return
     for (let i = 0; i <= message.length; i++) {
-      if (stopped.value || currentRun !== runId) return
+      if (stopped.value || currentRun !== runId || !isTabVisible.value) return
       typingText.value = message.slice(0, i)
       await new Promise((resolve) => setTimeout(resolve, 70))
     }
     await new Promise((resolve) => setTimeout(resolve, 2200))
-    if (stopped.value || currentRun !== runId) return
+    if (stopped.value || currentRun !== runId || !isTabVisible.value) return
     for (let i = message.length; i >= 0; i--) {
-      if (stopped.value || currentRun !== runId) return
+      if (stopped.value || currentRun !== runId || !isTabVisible.value) return
       typingText.value = message.slice(0, i)
       await new Promise((resolve) => setTimeout(resolve, 35))
     }
     await new Promise((resolve) => setTimeout(resolve, 500))
-    if (!stopped.value && currentRun === runId) typeLoop()
+    if (!stopped.value && currentRun === runId && isTabVisible.value) typeLoop()
   }
 
   typeLoop()
 }
 
 onMounted(() => {
+  onVisibility()
+  document.addEventListener('visibilitychange', onVisibility)
   startTyping()
 })
 
 onUnmounted(() => {
   stopped.value = true
   runId += 1
+  document.removeEventListener('visibilitychange', onVisibility)
 })
 
 watch(titleMessage, () => {
   if (!stopped.value) startTyping()
+})
+
+watch(isTabVisible, (visible) => {
+  if (!visible || stopped.value) return
+  startTyping()
 })
 </script>
 
@@ -326,6 +340,18 @@ watch(titleMessage, () => {
   .sidebar-panel {
     position: sticky;
     top: 5.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-panel {
+    position: static;
+    top: auto;
+  }
+
+  .exp-card,
+  .skill-tag {
+    transition: none;
   }
 }
 
