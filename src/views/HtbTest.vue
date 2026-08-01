@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
 
 const data = ref(null)
 const error = ref(null)
 const rawError = ref(null)
 const loading = ref(true)
+const { isSpanish } = useLanguage()
 
 onMounted(async () => {
   try {
@@ -32,23 +34,23 @@ onMounted(async () => {
     <div class="max-w-4xl mx-auto mb-8 flex items-center justify-between">
       <div>
         <span class="text-xs text-gray-600 tracking-widest">HACKTHEBOX</span>
-        <h1 class="text-2xl font-black tracking-widest" style="color:#ff003c">STATS DASHBOARD</h1>
+        <h1 class="text-2xl font-black tracking-widest" style="color:#ff003c">{{ isSpanish ? 'PANEL DE ESTADÍSTICAS' : 'STATS DASHBOARD' }}</h1>
       </div>
-      <a href="/" class="text-xs tracking-widest" style="color:#ff003c">← inicio</a>
+      <a href="/" class="text-xs tracking-widest" style="color:#ff003c">{{ isSpanish ? '← inicio' : '← home' }}</a>
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="max-w-4xl mx-auto text-center py-20">
-      <span class="text-gray-500 text-sm animate-pulse">cargando stats...</span>
+      <span class="text-gray-500 text-sm animate-pulse">{{ isSpanish ? 'cargando estadísticas...' : 'loading stats...' }}</span>
     </div>
 
     <!-- Error -->
     <div v-else-if="error" class="max-w-4xl mx-auto py-10 space-y-4">
-      <p class="text-sm" style="color:#ff003c">error: {{ error }}</p>
+      <p class="text-sm" style="color:#ff003c">{{ isSpanish ? 'error:' : 'error:' }} {{ error }}</p>
       <p v-if="rawError" class="text-xs text-gray-600 font-mono">{{ rawError }}</p>
       <!-- Badge oficial siempre disponible -->
       <div class="flex flex-col items-center gap-2 pt-6">
-        <p class="text-xs text-gray-600 tracking-widest">BADGE OFICIAL (siempre disponible)</p>
+        <p class="text-xs text-gray-600 tracking-widest">{{ isSpanish ? 'BADGE OFICIAL (siempre disponible)' : 'OFFICIAL BADGE (always available)' }}</p>
         <img
           src="https://www.hackthebox.com/badge/image/114171"
           alt="HTB Badge"
@@ -77,19 +79,19 @@ onMounted(async () => {
         </div>
         <div class="sm:ml-auto text-center sm:text-right space-y-1">
           <p class="text-3xl font-black text-white">{{ data.points ?? 0 }}</p>
-          <p class="text-xs text-gray-500 tracking-widest">PUNTOS</p>
+          <p class="text-xs text-gray-500 tracking-widest">{{ isSpanish ? 'PUNTOS' : 'POINTS' }}</p>
           <p class="text-lg font-bold" style="color:#ff003c">#{{ data.ranking ?? '—' }}</p>
-          <p class="text-xs text-gray-500 tracking-widest">RANKING GLOBAL</p>
+          <p class="text-xs text-gray-500 tracking-widest">{{ isSpanish ? 'RANKING GLOBAL' : 'GLOBAL RANKING' }}</p>
         </div>
       </div>
 
       <!-- Owns + challenges + respects -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div v-for="stat in [
-          { label: 'USER OWNS',  value: data.user_owns      ?? 0 },
-          { label: 'ROOT OWNS',  value: data.system_owns    ?? 0 },
-          { label: 'CHALLENGES', value: data.challenge_owns ?? 0 },
-          { label: 'RESPECTS',   value: data.respects       ?? 0 },
+          { label: isSpanish ? 'USUARIOS' : 'USER OWNS',  value: data.user_owns      ?? 0 },
+          { label: isSpanish ? 'ROOTS' : 'ROOT OWNS',     value: data.system_owns    ?? 0 },
+          { label: isSpanish ? 'DESAFÍOS' : 'CHALLENGES', value: data.challenge_owns ?? 0 },
+          { label: isSpanish ? 'RESPECTOS' : 'RESPECTS',  value: data.respects       ?? 0 },
         ]" :key="stat.label"
           class="p-4 rounded-lg text-center"
           style="border:1px solid #ff003c22; background:#0a0a0a"
@@ -101,7 +103,7 @@ onMounted(async () => {
 
       <!-- Máquinas por dificultad -->
       <div class="p-6 rounded-lg" style="border:1px solid #ff003c22; background:#0a0a0a">
-        <p class="text-xs text-gray-600 tracking-widest mb-4">MÁQUINAS POR DIFICULTAD</p>
+        <p class="text-xs text-gray-600 tracking-widest mb-4">{{ isSpanish ? 'MÁQUINAS POR DIFICULTAD' : 'MACHINES BY DIFFICULTY' }}</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div v-for="d in [
             { label: 'EASY',   value: data.easy_owns   ?? 0, color: '#9fef00' },
@@ -119,17 +121,17 @@ onMounted(async () => {
       <div class="grid grid-cols-2 gap-4">
         <div class="p-4 rounded-lg text-center" style="border:1px solid #ff003c22; background:#0a0a0a">
           <p class="text-2xl font-black" style="color:#ff003c">{{ data.user_bloods ?? 0 }}</p>
-          <p class="text-xs text-gray-600 tracking-widest mt-1">USER BLOODS</p>
+          <p class="text-xs text-gray-600 tracking-widest mt-1">{{ isSpanish ? 'BLOODS DE USUARIO' : 'USER BLOODS' }}</p>
         </div>
         <div class="p-4 rounded-lg text-center" style="border:1px solid #ff003c22; background:#0a0a0a">
           <p class="text-2xl font-black" style="color:#ff003c">{{ data.system_bloods ?? 0 }}</p>
-          <p class="text-xs text-gray-600 tracking-widest mt-1">ROOT BLOODS</p>
+          <p class="text-xs text-gray-600 tracking-widest mt-1">{{ isSpanish ? 'BLOODS DE ROOT' : 'ROOT BLOODS' }}</p>
         </div>
       </div>
 
       <!-- Badge oficial -->
       <div class="flex flex-col items-center gap-2 pt-4">
-        <p class="text-xs text-gray-600 tracking-widest">BADGE OFICIAL</p>
+        <p class="text-xs text-gray-600 tracking-widest">{{ isSpanish ? 'BADGE OFICIAL' : 'OFFICIAL BADGE' }}</p>
         <img
           src="https://www.hackthebox.com/badge/image/114171"
           alt="HTB Badge"
