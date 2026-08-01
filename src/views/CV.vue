@@ -9,7 +9,7 @@ const stopped = ref(false)
 let runId = 0
 
 const titleMessage = computed(() => (
-  isSpanish.value ? 'Investigador de seguridad y bug bounty' : 'Security Researcher & Bug Bounty Hunter'
+  isSpanish.value ? 'Ingeniero IT, threat hunter y ethical hacker' : 'IT Engineer, Threat Hunter & Ethical Hacker'
 ))
 
 const profile = computed(() => isSpanish.value ? {
@@ -18,20 +18,20 @@ const profile = computed(() => isSpanish.value ? {
   location: 'Madrid, España',
   email: 'julichaan@proton.me',
   github: 'github.com/julichaan',
-  linkedin: 'linkedin.com/in/julichaan',
+  linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
   about:
-    'Soy un investigador de seguridad afincado en Madrid, centrado en Red Team, pentesting y bug bounty. Me interesa especialmente el triaje de vulnerabilidades, la lectura de código con mentalidad ofensiva y la conversión de fallos pequeños en cadenas con impacto real. Trabajo con una mezcla de análisis manual, automatización práctica y escritura técnica para dejar claro qué ocurrió, por qué ocurrió y cómo se aprovecha de forma responsable.\n\n' +
-    'Me siento más cómodo en superficies donde conviven lógica de negocio, autenticación, control de acceso y decisiones de diseño que parecen inofensivas a primera vista. Fuera del trabajo, sigo resolviendo CTF, escribiendo writeups y estudiando nuevas técnicas de explotación y defensa.',
+    'Soy ingeniero IT y profesional de ciberseguridad en Madrid, con enfoque en threat hunting, ethical hacking y bug bounty. Mi forma de trabajar combina mentalidad ofensiva con disciplina de análisis: identificar señales débiles, entender el contexto técnico y transformarlo en hallazgos accionables para reducir riesgo real.\n\n' +
+    'Mi especialidad está en entornos donde confluyen lógica de negocio, control de acceso y superficie web/API. Me interesan especialmente las vulnerabilidades que parecen menores en aislamiento, pero que encadenadas explican impacto de negocio. Además, mantengo una práctica continua en CTF y writeups para reforzar investigación, reporting técnico y criterio de priorización.',
 } : {
   name: 'Julián Espada Rodríguez',
   alias: 'julichaan',
   location: 'Madrid, Spain',
   email: 'julichaan@proton.me',
   github: 'github.com/julichaan',
-  linkedin: 'linkedin.com/in/julichaan',
+  linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
   about:
-    'I am a Madrid-based security researcher focused on Red Team, penetration testing, and bug bounty work. I am especially interested in vulnerability triage, reading code with an offensive mindset, and turning small flaws into chains with real impact. I like combining manual analysis, practical automation, and technical writing so it is clear what happened, why it happened, and how it can be responsibly reproduced.\n\n' +
-    'I work best in areas where business logic, authentication, access control, and seemingly harmless design choices all meet. Outside work, I keep solving CTFs, writing writeups, and studying new exploitation and defense techniques.',
+    'I am an IT Engineer and cybersecurity professional based in Madrid, focused on threat hunting, ethical hacking, and bug bounty research. My approach blends offensive thinking with analytical discipline: identify weak signals, understand technical context, and turn findings into actionable security decisions that reduce real risk.\n\n' +
+    'I perform best in areas where business logic, access control, and web/API attack surface converge. I am especially interested in vulnerabilities that look minor in isolation but become high-impact when chained. I also keep an active CTF/writeup routine to sharpen research depth, technical reporting, and triage judgment.',
 })
 
 const experience = computed(() => isSpanish.value ? [
