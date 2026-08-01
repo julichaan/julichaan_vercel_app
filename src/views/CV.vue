@@ -1,162 +1,147 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
 
-// ── Typing effect ──────────────────────────────────────────────
+const { isSpanish } = useLanguage()
+
 const typingText = ref('')
-const MSG = 'Security Researcher & Hacker'
-let stopped = false
+const stopped = ref(false)
+let runId = 0
 
-onMounted(async () => {
+const titleMessage = computed(() => (
+  isSpanish.value ? 'Investigador de seguridad y bug bounty' : 'Security Researcher & Bug Bounty Hunter'
+))
+
+const profile = computed(() => isSpanish.value ? {
+  name: 'Julián Espada Rodríguez',
+  alias: 'julichaan',
+  location: 'Madrid, España',
+  email: 'julichaan@proton.me',
+  github: 'github.com/julichaan',
+  linkedin: 'linkedin.com/in/julichaan',
+  about:
+    'Soy un investigador de seguridad afincado en Madrid, centrado en Red Team, pentesting y bug bounty. Me interesa especialmente el triaje de vulnerabilidades, la lectura de código con mentalidad ofensiva y la conversión de fallos pequeños en cadenas con impacto real. Trabajo con una mezcla de análisis manual, automatización práctica y escritura técnica para dejar claro qué ocurrió, por qué ocurrió y cómo se aprovecha de forma responsable.\n\n' +
+    'Me siento más cómodo en superficies donde conviven lógica de negocio, autenticación, control de acceso y decisiones de diseño que parecen inofensivas a primera vista. Fuera del trabajo, sigo resolviendo CTF, escribiendo writeups y estudiando nuevas técnicas de explotación y defensa.',
+} : {
+  name: 'Julián Espada Rodríguez',
+  alias: 'julichaan',
+  location: 'Madrid, Spain',
+  email: 'julichaan@proton.me',
+  github: 'github.com/julichaan',
+  linkedin: 'linkedin.com/in/julichaan',
+  about:
+    'I am a Madrid-based security researcher focused on Red Team, penetration testing, and bug bounty work. I am especially interested in vulnerability triage, reading code with an offensive mindset, and turning small flaws into chains with real impact. I like combining manual analysis, practical automation, and technical writing so it is clear what happened, why it happened, and how it can be responsibly reproduced.\n\n' +
+    'I work best in areas where business logic, authentication, access control, and seemingly harmless design choices all meet. Outside work, I keep solving CTFs, writing writeups, and studying new exploitation and defense techniques.',
+})
+
+const experience = computed(() => isSpanish.value ? [
+  {
+    role: 'Security Researcher (Bug Bounty)',
+    company: 'Freelance',
+    period: '2023 — presente',
+    desc: 'Investigación de vulnerabilidades en programas públicos y privados. Enfoque en IDOR, XSS, SSRF y lógica de negocio.',
+  },
+  {
+    role: 'Analista de Ciberseguridad Jr.',
+    company: 'TechSec S.L.',
+    period: '2022 — 2023',
+    desc: 'Pentesting web y de infraestructura para clientes PYME. Informes técnicos y ejecutivos. Hardening de servidores Linux.',
+  },
+  {
+    role: 'Becaria de Desarrollo',
+    company: 'StartupXYZ',
+    period: '2021 — 2022',
+    desc: 'Desarrollo frontend con Vue.js. Primer contacto con DevSecOps e integración de SAST en CI/CD.',
+  },
+] : [
+  {
+    role: 'Security Researcher (Bug Bounty)',
+    company: 'Freelance',
+    period: '2023 — present',
+    desc: 'Vulnerability research across public and private programs. Focus on IDOR, XSS, SSRF, and business logic.',
+  },
+  {
+    role: 'Junior Cybersecurity Analyst',
+    company: 'TechSec S.L.',
+    period: '2022 — 2023',
+    desc: 'Web and infrastructure penetration testing for SMB clients. Technical and executive reporting. Linux server hardening.',
+  },
+  {
+    role: 'Development Intern',
+    company: 'StartupXYZ',
+    period: '2021 — 2022',
+    desc: 'Frontend development with Vue.js. First exposure to DevSecOps and SAST integration in CI/CD.',
+  },
+])
+
+const education = computed(() => isSpanish.value ? [
+  { title: 'Grado en Ingeniería Informática', center: 'Universidad Autónoma de Madrid', period: '2018 — 2022' },
+  { title: 'Máster en Ciberseguridad', center: 'UEM — Universidad Europea de Madrid', period: '2022 — 2023' },
+] : [
+  { title: 'BSc in Computer Engineering', center: 'Autonomous University of Madrid', period: '2018 — 2022' },
+  { title: 'Master’s in Cybersecurity', center: 'UEM — European University of Madrid', period: '2022 — 2023' },
+])
+
+const skills = computed(() => isSpanish.value ? {
+  ofensivo: ['Burp Suite', 'Metasploit', 'SQLMap', 'Nmap', 'Ffuf', 'Nuclei', 'CrackMapExec'],
+  lenguajes: ['Python', 'Bash', 'JavaScript', 'SQL', 'PowerShell'],
+  otros: ['Linux', 'Docker', 'Git', 'nociones de AWS', 'OWASP Top 10', 'investigación de CVEs'],
+} : {
+  ofensivo: ['Burp Suite', 'Metasploit', 'SQLMap', 'Nmap', 'Ffuf', 'Nuclei', 'CrackMapExec'],
+  lenguajes: ['Python', 'Bash', 'JavaScript', 'SQL', 'PowerShell'],
+  otros: ['Linux', 'Docker', 'Git', 'AWS basics', 'OWASP Top 10', 'CVE research'],
+})
+
+const startTyping = () => {
+  runId += 1
+  const currentRun = runId
+  const message = titleMessage.value
+  typingText.value = ''
+
   const typeLoop = async () => {
-    for (let i = 0; i <= MSG.length; i++) {
-      if (stopped) return
-      <script setup>
-      import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
-      import { useLanguage } from '../composables/useLanguage'
+    for (let i = 0; i <= message.length; i++) {
+      if (stopped.value || currentRun !== runId) return
+      typingText.value = message.slice(0, i)
+      await new Promise((resolve) => setTimeout(resolve, 70))
     }
-    await new Promise(r => setTimeout(r, 2400))
-    if (stopped) return
-      const { isSpanish } = useLanguage()
-      const MSG = computed(() => (isSpanish.value ? 'Investigadora de seguridad y hacker' : 'Security Researcher & Hacker'))
-      if (stopped) return
-      let runId = 0
+    await new Promise((resolve) => setTimeout(resolve, 2200))
+    if (stopped.value || currentRun !== runId) return
+    for (let i = message.length; i >= 0; i--) {
+      if (stopped.value || currentRun !== runId) return
+      typingText.value = message.slice(0, i)
+      await new Promise((resolve) => setTimeout(resolve, 35))
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    if (!stopped.value && currentRun === runId) typeLoop()
+  }
 
-      const typeLoop = async (id) => {
-        const message = MSG.value
-        for (let i = 0; i <= message.length; i++) {
-          if (stopped || id !== runId) return
-          typingText.value = message.slice(0, i)
-          await new Promise(r => setTimeout(r, 70))
-        }
-        await new Promise(r => setTimeout(r, 2400))
-        if (stopped || id !== runId) return
-        for (let i = message.length; i >= 0; i--) {
-          if (stopped || id !== runId) return
-          typingText.value = message.slice(0, i)
-          await new Promise(r => setTimeout(r, 35))
-        }
-        await new Promise(r => setTimeout(r, 500))
-        if (!stopped && id === runId) typeLoop(id)
-      }
+  typeLoop()
+}
 
-      const restartTyping = () => {
-        runId += 1
-        typingText.value = ''
-        typeLoop(runId)
-      }
-      typingText.value = MSG.slice(0, i)
-      await new Promise(r => setTimeout(r, 35))
-        restartTyping()
-  github:   'github.com/julichaan',
-      onUnmounted(() => { stopped = true; runId += 1 })
+onMounted(() => {
+  startTyping()
+})
 
-      watch(MSG, () => {
-        if (!stopped) restartTyping()
-      })
+onUnmounted(() => {
+  stopped.value = true
+  runId += 1
+})
 
-      // ── Datos ─────────────────────────────────────────────────────
-      const profile = computed(() => isSpanish.value ? {
-        name: 'Julia Chan',
-        alias: 'julichaan',
-        location: 'Madrid, España',
-        email: 'julichaan@proton.me',
-        github: 'github.com/julichaan',
-        linkedin: 'linkedin.com/in/julichaan',
-        about:
-          'Soy un ingeniero de ciberseguridad de 27 años apasionado por mi trabajo, especializado en Red Team y pentesting. Mi objetivo es proteger la integridad y la confidencialidad de los sistemas de información mediante análisis proactivos y simulaciones de ataque. Con una sólida formación académica y varias certificaciones reconocidas por la industria, me dedico a identificar y mitigar vulnerabilidades antes de que puedan ser explotadas.\n\n' +
-          'Mis competencias principales incluyen:\n' +
-          'Red Team: simulación de ataques reales para evaluar y mejorar la postura de seguridad de las organizaciones.\n' +
-          'Pentesting: realización de pruebas de penetración detalladas para identificar y corregir fallos de seguridad.\n' +
-          'Análisis de vulnerabilidades: evaluación de sistemas y aplicaciones para descubrir y mitigar riesgos.\n' +
-          'Respuesta a incidentes: desarrollo e implementación de planes de respuesta para mitigar el impacto de los incidentes de seguridad.\n\n' +
-          'En mi tiempo libre, disfruto resolviendo retos CTF (Capture The Flag) y aprendiendo constantemente sobre nuevas vulnerabilidades. La ciberseguridad no es solo mi profesión; es mi pasión.',
-      } : {
-        name: 'Julia Chan',
-        alias: 'julichaan',
-        location: 'Madrid, Spain',
-        email: 'julichaan@proton.me',
-        github: 'github.com/julichaan',
-        linkedin: 'linkedin.com/in/julichaan',
-        about:
-          'I am a 27-year-old cybersecurity engineer passionate about my work, specialized in Red Team and penetration testing. My goal is to protect the integrity and confidentiality of information systems through proactive analysis and attack simulations. With a strong academic background and several industry-recognized certifications, I focus on identifying and mitigating vulnerabilities before they can be exploited.\n\n' +
-          'My main skills include:\n' +
-          'Red Team: simulating real-world attacks to assess and improve an organization\'s security posture.\n' +
-          'Penetration testing: performing detailed security assessments to identify and fix security issues.\n' +
-          'Vulnerability analysis: evaluating systems and applications to uncover and reduce risk.\n' +
-          'Incident response: developing and implementing response plans to reduce the impact of security incidents.\n\n' +
-          'In my free time, I enjoy solving CTF (Capture The Flag) challenges and constantly learning about new vulnerabilities. Cybersecurity is not just my profession; it is my passion.',
-      })
+watch(titleMessage, () => {
+  if (!stopped.value) startTyping()
+})
+</script>
 
-      const experience = computed(() => isSpanish.value ? [
-        {
-          role: 'Security Researcher (Bug Bounty)',
-          company: 'Freelance',
-          period: '2023 — presente',
-          desc: 'Investigación de vulnerabilidades en programas públicos y privados. Enfoque en IDOR, XSS, SSRF y lógica de negocio.',
-        },
-        {
-          role: 'Analista de Ciberseguridad Jr.',
-          company: 'TechSec S.L.',
-          period: '2022 — 2023',
-          desc: 'Pentesting web y de infraestructura para clientes PYME. Informes técnicos y ejecutivos. Hardening de servidores Linux.',
-        },
-        {
-          role: 'Becaria de Desarrollo',
-          company: 'StartupXYZ',
-          period: '2021 — 2022',
-          desc: 'Desarrollo frontend con Vue.js. Primer contacto con DevSecOps e integración de SAST en CI/CD.',
-        },
-      ] : [
-        {
-          role: 'Security Researcher (Bug Bounty)',
-          company: 'Freelance',
-          period: '2023 — present',
-          desc: 'Vulnerability research across public and private programs. Focus on IDOR, XSS, SSRF, and business logic.',
-        },
-        {
-          role: 'Junior Cybersecurity Analyst',
-          company: 'TechSec S.L.',
-          period: '2022 — 2023',
-          desc: 'Web and infrastructure penetration testing for SMB clients. Technical and executive reporting. Linux server hardening.',
-        },
-        {
-          role: 'Development Intern',
-          company: 'StartupXYZ',
-          period: '2021 — 2022',
-          desc: 'Frontend development with Vue.js. First exposure to DevSecOps and SAST integration in CI/CD.',
-        },
-      ])
-
-      const education = computed(() => isSpanish.value ? [
-        { title: 'Grado en Ingeniería Informática', center: 'Universidad Autónoma de Madrid', period: '2018 — 2022' },
-        { title: 'Máster en Ciberseguridad', center: 'UEM — Universidad Europea de Madrid', period: '2022 — 2023' },
-      ] : [
-        { title: 'BSc in Computer Engineering', center: 'Autonomous University of Madrid', period: '2018 — 2022' },
-        { title: 'Master’s in Cybersecurity', center: 'UEM — European University of Madrid', period: '2022 — 2023' },
-      ])
-
-      const certs = [
-        { name: 'eJPT — eLearnSecurity Junior Penetration Tester', year: '2022' },
-        { name: 'CEH — Certified Ethical Hacker', year: '2023' },
-        { name: 'OSCP — Offensive Security Certified Professional', year: '2024' },
-        { name: 'HTB Pro Hacker Rank', year: '2024' },
-      ]
-
-      const skills = computed(() => isSpanish.value ? {
-        ofensivo: ['Burp Suite', 'Metasploit', 'SQLMap', 'Nmap', 'Ffuf', 'Nuclei', 'CrackMapExec'],
-        lenguajes: ['Python', 'Bash', 'JavaScript', 'SQL', 'PowerShell'],
-        otros: ['Linux', 'Docker', 'Git', 'nociones de AWS', 'OWASP Top 10', 'investigación de CVEs'],
-      } : {
-        ofensivo: ['Burp Suite', 'Metasploit', 'SQLMap', 'Nmap', 'Ffuf', 'Nuclei', 'CrackMapExec'],
-        lenguajes: ['Python', 'Bash', 'JavaScript', 'SQL', 'PowerShell'],
-        otros: ['Linux', 'Docker', 'Git', 'AWS basics', 'OWASP Top 10', 'CVE research'],
-      })
+<template>
+  <div class="font-mono bg-black text-gray-300 min-h-screen">
+    <div class="max-w-5xl mx-auto px-6 py-14">
+      <header class="mb-12 pb-8 border-b" style="border-color:#ff003c33">
+        <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// cv</p>
 
         <h1 class="text-5xl md:text-6xl font-black tracking-widest mb-4" style="color:#ff003c">
           {{ profile.name }}
         </h1>
 
-        <!-- Prompt con typing -->
         <div class="flex flex-wrap items-center gap-0 text-lg md:text-xl mb-5 select-none">
           <span style="color:#ff003c">julichaan</span>
           <span class="text-gray-600">@</span>
@@ -166,33 +151,21 @@ onMounted(async () => {
           <span class="animate-pulse" style="color:#00ff9f">▌</span>
         </div>
 
-        <!-- Contacto en línea -->
         <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs" style="color:#555">
           <span>📍 {{ profile.location }}</span>
-          <a :href="'mailto:' + profile.email"
-             class="hover:text-gray-300 transition-colors">✉ {{ profile.email }}</a>
-          <a :href="'https://' + profile.github"
-             target="_blank" rel="noopener"
-             class="hover:text-gray-300 transition-colors">⌥ {{ profile.github }}</a>
-          <a :href="'https://' + profile.linkedin"
-             target="_blank" rel="noopener"
-             class="hover:text-gray-300 transition-colors">⌥ {{ profile.linkedin }}</a>
+          <a :href="'mailto:' + profile.email" class="hover:text-gray-300 transition-colors">✉ {{ profile.email }}</a>
+          <a :href="'https://' + profile.github" target="_blank" rel="noopener" class="hover:text-gray-300 transition-colors">⌥ {{ profile.github }}</a>
+          <a :href="'https://' + profile.linkedin" target="_blank" rel="noopener" class="hover:text-gray-300 transition-colors">⌥ {{ profile.linkedin }}</a>
         </div>
       </header>
 
-      <!-- ══ GRID DOS COLUMNAS ══════════════════════════════════════ -->
       <div class="cv-grid">
-
-        <!-- ── COLUMNA IZQUIERDA (principal) ── -->
         <div class="space-y-10">
-
-          <!-- SOBRE MÍ -->
           <section>
             <h2 class="section-title">{{ isSpanish ? 'SOBRE MÍ' : 'ABOUT ME' }}</h2>
             <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line">{{ profile.about }}</p>
           </section>
 
-          <!-- EXPERIENCIA -->
           <section>
             <h2 class="section-title">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
             <div class="space-y-4">
@@ -207,7 +180,6 @@ onMounted(async () => {
             </div>
           </section>
 
-          <!-- EDUCACIÓN -->
           <section>
             <h2 class="section-title">{{ isSpanish ? 'EDUCACIÓN' : 'EDUCATION' }}</h2>
             <div class="space-y-3">
@@ -220,13 +192,9 @@ onMounted(async () => {
               </div>
             </div>
           </section>
-
         </div>
 
-        <!-- ── COLUMNA DERECHA (sidebar) ── -->
         <div class="space-y-10">
-
-          <!-- HABILIDADES -->
           <section>
             <h2 class="section-title">{{ isSpanish ? 'HABILIDADES' : 'SKILLS' }}</h2>
 
@@ -246,25 +214,6 @@ onMounted(async () => {
             </div>
           </section>
 
-          <!-- CERTIFICACIONES -->
-          <section>
-            <h2 class="section-title">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
-            <ul class="space-y-2">
-              <li
-                v-for="cert in certs"
-                :key="cert.name"
-                class="flex items-start justify-between gap-3 border-l-2 pl-3 py-1"
-                style="border-color:#00ff9f33"
-              >
-                <span class="text-xs text-gray-300 leading-snug">
-                  <span style="color:#00ff9f" class="mr-1">▸</span>{{ cert.name }}
-                </span>
-                <span class="text-xs tabular-nums text-gray-600 shrink-0">{{ cert.year }}</span>
-              </li>
-            </ul>
-          </section>
-
-          <!-- CONTACTO / EXTRA -->
           <section>
             <h2 class="section-title">{{ isSpanish ? 'CONTACTO' : 'CONTACT' }}</h2>
             <div class="space-y-2 text-xs" style="color:#555">
@@ -280,21 +229,17 @@ onMounted(async () => {
               </p>
             </div>
           </section>
-
         </div>
-      </div><!-- /cv-grid -->
+      </div>
 
-      <!-- ══ FOOTER ════════════════════════════════════════════════ -->
       <footer class="text-center text-xs text-gray-700 border-t mt-14 pt-6" style="border-color:#ff003c22">
         {{ isSpanish ? 'cat cv.pdf | strings | grep -i "contrátame"' : 'cat cv.pdf | strings | grep -i "hire me"' }}
       </footer>
-
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Layout dos columnas: 60/40 en desktop, apiladas en móvil */
 .cv-grid {
   display: grid;
   grid-template-columns: 1fr;
