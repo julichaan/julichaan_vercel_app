@@ -36,29 +36,53 @@ const profile = computed(() => isSpanish.value ? {
 
 const experience = computed(() => isSpanish.value ? [
   {
-    role: 'IT Engineer',
-    company: 'ALTEN Spain',
-    period: 'Actualidad',
-    desc: 'Ingeniería IT con foco en ciberseguridad aplicada, hardening operativo y soporte técnico en entornos empresariales.',
+    role: 'Threat Hunter and Deception - Telefonica Tech',
+    company: 'ALTEN Spain · Jornada completa',
+    period: 'abr. 2026 — actualidad · En remoto',
+    desc: 'Equipo de Threat Hunting de Telefonica Tech. Threat hunter multiclientelar con Cortex XDR, Microsoft Defender for Endpoint, Cytomic Orion y CrowdStrike.',
   },
   {
-    role: 'Threat Hunter · Ethical Hacker · Bug Bounty Hunter',
-    company: 'Independent',
-    period: '2023 — presente',
-    desc: 'Investigación de vulnerabilidades web/API, análisis ofensivo y generación de reportes técnicos para programas de seguridad.',
+    role: 'Bug Bounty Hunter',
+    company: 'Secur0 · Profesional independiente',
+    period: 'sept. 2025 — actualidad',
+    desc: 'Hunting de bugs y vulnerabilidades en la plataforma Secur0.',
+  },
+  {
+    role: 'Cybersecurity Engineer',
+    company: 'Isdefe · Jornada completa',
+    period: 'jun. 2023 — abr. 2026 · Presencial',
+    desc: 'Proyecto de ciberseguridad en el Mando Conjunto del Ciberespacio.',
+  },
+  {
+    role: 'Cybersecurity Engineer',
+    company: 'Mando Conjunto del Ciberespacio (MCCE) · Jornada completa',
+    period: 'jun. 2023 — abr. 2026 · Presencial',
+    desc: 'Analista SOC y posteriormente ingeniero en proyecto 5G. Tecnologías: ArcSight, Cortex XDR, Splunk, Tenable y herramientas CCN (Lucia, Reyes y Carmen).',
   },
 ] : [
   {
-    role: 'IT Engineer',
-    company: 'ALTEN Spain',
-    period: 'Present',
-    desc: 'IT engineering work with a focus on applied cybersecurity, operational hardening, and enterprise technical support.',
+    role: 'Threat Hunter and Deception - Telefonica Tech',
+    company: 'ALTEN Spain · Full-time',
+    period: 'Apr 2026 — present · Remote',
+    desc: 'Part of Telefonica Tech threat hunting team. Multi-client threat hunter using Cortex XDR, Microsoft Defender for Endpoint, Cytomic Orion, and CrowdStrike.',
   },
   {
-    role: 'Threat Hunter · Ethical Hacker · Bug Bounty Hunter',
-    company: 'Independent',
-    period: '2023 — present',
-    desc: 'Web/API vulnerability research, offensive analysis, and technical reporting for security programs.',
+    role: 'Bug Bounty Hunter',
+    company: 'Secur0 · Independent',
+    period: 'Sep 2025 — present',
+    desc: 'Hunting bugs and vulnerabilities on the Secur0 platform.',
+  },
+  {
+    role: 'Cybersecurity Engineer',
+    company: 'Isdefe · Full-time',
+    period: 'Jun 2023 — Apr 2026 · On-site',
+    desc: 'Worked on the cybersecurity project for Mando Conjunto del Ciberespacio.',
+  },
+  {
+    role: 'Cybersecurity Engineer',
+    company: 'Mando Conjunto del Ciberespacio (MCCE) · Full-time',
+    period: 'Jun 2023 — Apr 2026 · On-site',
+    desc: 'SOC analyst and later engineer in a 5G project. Stack: ArcSight, Cortex XDR, Splunk, Tenable, and CCN tools (Lucia, Reyes, Carmen).',
   },
 ])
 
@@ -67,50 +91,50 @@ const certifications = computed(() => isSpanish.value ? [
     name: 'eJPT',
     detail: 'eLearnSecurity Junior Penetration Tester',
     issuer: 'INE Security',
-    image: '/certifications/ejpt.svg',
+    image: '/certifications/ejpt.png',
   },
   {
     name: 'eCPPT',
     detail: 'eLearnSecurity Certified Professional Penetration Tester',
     issuer: 'INE Security',
-    image: '/certifications/ecppt.svg',
+    image: '/certifications/ecppt.png',
   },
   {
     name: 'CRTA',
     detail: 'Certified Red Team Analyst',
     issuer: 'Altered Security',
-    image: '/certifications/crta.svg',
+    image: '/certifications/crta.png',
   },
   {
     name: 'Web-RTA',
     detail: 'Web Red Team Analyst',
     issuer: 'Web Security Program',
-    image: '/certifications/web-rta.svg',
+    image: '/certifications/webrta.png',
   },
 ] : [
   {
     name: 'eJPT',
     detail: 'eLearnSecurity Junior Penetration Tester',
     issuer: 'INE Security',
-    image: '/certifications/ejpt.svg',
+    image: '/certifications/ejpt.png',
   },
   {
     name: 'eCPPT',
     detail: 'eLearnSecurity Certified Professional Penetration Tester',
     issuer: 'INE Security',
-    image: '/certifications/ecppt.svg',
+    image: '/certifications/ecppt.png',
   },
   {
     name: 'CRTA',
     detail: 'Certified Red Team Analyst',
     issuer: 'Altered Security',
-    image: '/certifications/crta.svg',
+    image: '/certifications/crta.png',
   },
   {
     name: 'Web-RTA',
     detail: 'Web Red Team Analyst',
     issuer: 'Web Security Program',
-    image: '/certifications/web-rta.svg',
+    image: '/certifications/webrta.png',
   },
 ])
 
@@ -202,17 +226,17 @@ watch(titleMessage, () => {
       <div class="cv-grid max-w-4xl mx-auto">
         <div class="space-y-10">
           <section>
-            <h2 class="section-title">{{ isSpanish ? 'SOBRE MÍ' : 'ABOUT ME' }}</h2>
+            <h2 class="section-title text-center">{{ isSpanish ? 'SOBRE MÍ' : 'ABOUT ME' }}</h2>
             <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line text-center max-w-3xl mx-auto">{{ profile.about }}</p>
           </section>
 
           <section>
-            <h2 class="section-title">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
+            <h2 class="section-title text-center">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
             <div class="space-y-4">
               <div v-for="job in experience" :key="job.role" class="exp-card text-center">
-                <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+                <div class="flex flex-col items-center gap-1 mb-1">
                   <span class="font-bold text-white text-sm">{{ job.role }}</span>
-                  <span class="text-xs tabular-nums shrink-0" style="color:#00ff9f">{{ job.period }}</span>
+                  <span class="text-xs tabular-nums" style="color:#00ff9f">{{ job.period }}</span>
                 </div>
                 <p class="text-xs mb-2" style="color:#ff003c">{{ job.company }}</p>
                 <p class="text-xs text-gray-500 leading-relaxed">{{ job.desc }}</p>
@@ -221,22 +245,20 @@ watch(titleMessage, () => {
           </section>
 
           <section>
-            <h2 class="section-title">{{ isSpanish ? 'EDUCACIÓN' : 'EDUCATION' }}</h2>
+            <h2 class="section-title text-center">{{ isSpanish ? 'EDUCACIÓN' : 'EDUCATION' }}</h2>
             <div class="space-y-3">
-              <div v-for="edu in education" :key="edu.title" class="exp-card">
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <div v-for="edu in education" :key="edu.title" class="exp-card text-center">
+                <div class="flex flex-col items-center gap-1">
                   <span class="font-bold text-white text-sm">{{ edu.title }}</span>
-                  <span class="text-xs tabular-nums shrink-0" style="color:#00ff9f">{{ edu.period }}</span>
+                  <span class="text-xs tabular-nums" style="color:#00ff9f">{{ edu.period }}</span>
                 </div>
                 <p class="text-xs mt-1" style="color:#ff003c">{{ edu.center }}</p>
               </div>
             </div>
           </section>
-        </div>
 
-        <div class="space-y-10">
           <section>
-            <h2 class="section-title">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
+            <h2 class="section-title text-center">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
             <div class="grid-certifications">
               <article v-for="cert in certifications" :key="cert.name" class="cert-card">
                 <img :src="cert.image" :alt="cert.name" class="cert-image" loading="lazy" />
@@ -248,27 +270,27 @@ watch(titleMessage, () => {
           </section>
 
           <section>
-            <h2 class="section-title">{{ isSpanish ? 'HABILIDADES' : 'SKILLS' }}</h2>
+            <h2 class="section-title text-center">{{ isSpanish ? 'HABILIDADES' : 'SKILLS' }}</h2>
 
-            <p class="label-cat">{{ isSpanish ? '// ofensivo' : '// offensive' }}</p>
-            <div class="flex flex-wrap gap-2 mb-4">
+            <p class="label-cat text-center">{{ isSpanish ? '// ofensivo' : '// offensive' }}</p>
+            <div class="flex flex-wrap gap-2 mb-4 justify-center">
               <span v-for="s in skills.ofensivo" :key="s" class="skill-tag">{{ s }}</span>
             </div>
 
-            <p class="label-cat">{{ isSpanish ? '// lenguajes' : '// languages' }}</p>
-            <div class="flex flex-wrap gap-2 mb-4">
+            <p class="label-cat text-center">{{ isSpanish ? '// lenguajes' : '// languages' }}</p>
+            <div class="flex flex-wrap gap-2 mb-4 justify-center">
               <span v-for="s in skills.lenguajes" :key="s" class="skill-tag">{{ s }}</span>
             </div>
 
-            <p class="label-cat">{{ isSpanish ? '// otros' : '// other' }}</p>
-            <div class="flex flex-wrap gap-2">
+            <p class="label-cat text-center">{{ isSpanish ? '// otros' : '// other' }}</p>
+            <div class="flex flex-wrap gap-2 justify-center">
               <span v-for="s in skills.otros" :key="s" class="skill-tag">{{ s }}</span>
             </div>
           </section>
 
           <section>
-            <h2 class="section-title">{{ isSpanish ? 'CONTACTO' : 'CONTACT' }}</h2>
-            <div class="space-y-2 text-xs" style="color:#555">
+            <h2 class="section-title text-center">{{ isSpanish ? 'CONTACTO' : 'CONTACT' }}</h2>
+            <div class="space-y-2 text-xs text-center" style="color:#555">
               <p><span style="color:#00ff9f">$</span> {{ isSpanish ? 'ubicación' : 'location' }}   → {{ profile.location }}</p>
               <p><span style="color:#00ff9f">$</span> {{ isSpanish ? 'correo' : 'email' }}      →
                 <a :href="'mailto:' + profile.email" class="hover:text-gray-300 transition-colors">{{ profile.email }}</a>
@@ -293,15 +315,7 @@ watch(titleMessage, () => {
 
 <style scoped>
 .cv-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-}
-
-@media (min-width: 1024px) {
-  .cv-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  display: block;
 }
 
 .section-title {
@@ -325,7 +339,7 @@ watch(titleMessage, () => {
   padding: 0.7rem 0.9rem;
   border: 1px solid #ffffff07;
   background: #080808;
-  border-radius: 2px;
+  border-radius: 4px;
   transition: border-color 0.2s;
 }
 .exp-card:hover {
@@ -354,7 +368,13 @@ watch(titleMessage, () => {
 
 @media (min-width: 640px) {
   .grid-certifications {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-certifications {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
