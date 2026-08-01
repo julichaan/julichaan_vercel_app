@@ -150,6 +150,123 @@ function copyLink() {
 
 const postsEn = ref([
   {
+    id: 7,
+    title: 'Dotfiles State Tampering: Redacted Bug Bounty Case',
+    excerpt: 'A bug bounty field note based on a real finding: insecure directory creation permissions (0o777) around local state storage, enabling tampering under permissive umask setups.',
+    date: 'August 2026',
+    category: 'Bug Bounty Diary',
+    cvss: '2.0',
+    author: 'julichaan',
+    readTime: '7 min read',
+    tags: ['Bug Bounty', 'Local Security', 'Defense in Depth', 'Permissions', 'Umask'],
+    content: [
+      {
+        type: 'callout', variant: 'info',
+        text: 'All sensitive details are intentionally redacted. Company name, platform, and identifying infrastructure are replaced with neutral placeholders.'
+      },
+      {
+        type: 'h2', text: '1. The Setup'
+      },
+      {
+        type: 'p',
+        text: 'Late one evening, I was triaging low-noise targets inside <strong>[REDACTED_PLATFORM]</strong> and picked a well-known open-source utility used to manage workstation configuration. Nothing flashy: no web endpoint, no auth bypass, no cloud token leak. Just local state handling and file permissions, the kind of area that often gets skipped during quick reviews.'
+      },
+      {
+        type: 'p',
+        text: 'While tracing how the tool persisted execution state, I noticed it created the containing directory with <code>os.MkdirAll(dir, 0o777)</code>. The state database file itself was opened with strict permissions, but the parent directory mode depended entirely on process <code>umask</code>.'
+      },
+      {
+        type: 'h2', text: '2. Technical Root Cause'
+      },
+      {
+        type: 'p',
+        text: 'The bug was straightforward: a sensitive state directory was requested as world-writable by default and only restricted if the runtime umask happened to be strict. In hardened desktops this may still land safely, but in permissive environments (for example shared CI runners or containers using <code>umask 000</code>) the resulting directory can become group/world writable.'
+      },
+      {
+        type: 'code',
+        text:
+`OpenFile: func(name string, flag int, perm fs.FileMode) (*os.File, error) {
+    dir, _ := filepath.Split(rawPath.String())
+    if err := os.MkdirAll(dir, 0o777); err != nil {
+        return nil, err
+    }
+    return os.OpenFile(rawPath.String(), flag, perm)
+}`
+      },
+      {
+        type: 'h2', text: '3. Reproduction (Safe PoC)'
+      },
+      {
+        type: 'ul',
+        items: [
+          'Set permissive mask: <code>umask 000</code>.',
+          'Delete the existing state DB path in the config directory.',
+          'Run a normal command that recreates state (for example: <code>apply</code>).',
+          'Check directory mode with <code>ls -ld</code> and observe that restrictions were not explicitly enforced by the application.',
+        ]
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'Important: this issue is local and requires a precondition (weak umask). It is not remote code execution and not a privilege escalation by itself.'
+      },
+      {
+        type: 'h2', text: '4. Why It Still Matters'
+      },
+      {
+        type: 'p',
+        text: 'If another unprivileged local user can write in that directory, they can tamper with trusted state: remove or replace entries, force "run-once" automation to execute again, or alter local behavior assumptions. On shared hosts, this can become an operational integrity problem with real downstream impact.'
+      },
+      {
+        type: 'table',
+        headers: ['Aspect', 'Assessment'],
+        rows: [
+          ['Attack surface', 'Local filesystem state directory'],
+          ['Prerequisite', 'Permissive umask / shared local environment'],
+          ['Complexity', 'Low'],
+          ['Impact', 'State tampering and unintended script re-execution'],
+          ['Severity rationale', 'Medium (precondition required)'],
+        ]
+      },
+      {
+        type: 'h2', text: '5. Suggested Fix (Defense in Depth)'
+      },
+      {
+        type: 'p',
+        text: 'The hardening change is small and explicit: request owner-only directory permissions at creation time, independently of umask defaults.'
+      },
+      {
+        type: 'code',
+        text:
+`if err := os.MkdirAll(dir, 0o700); err != nil {
+    return nil, err
+}`
+      },
+      {
+        type: 'p',
+        text: 'This aligns the directory with the database file protection model and removes environment-dependent security drift.'
+      },
+      {
+        type: 'h2', text: '6. Disclosure Notes (Redacted)'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Program:</strong> [REDACTED_BUG_BOUNTY_PLATFORM]',
+          '<strong>Vendor/Project:</strong> [REDACTED_VENDOR]',
+          '<strong>Report status:</strong> Accepted as valid security hardening issue',
+          '<strong>Public references:</strong> withheld in this post to preserve disclosure boundaries',
+        ]
+      },
+      {
+        type: 'h2', text: '7. Takeaway'
+      },
+      {
+        type: 'p',
+        text: 'A lot of practical bug bounty wins are not cinematic. They are precise, boring, and defensible: identify trust assumptions, test environmental edge cases, and reduce security behavior variance. Permission defaults are small details until they are the whole incident.'
+      },
+    ]
+  },
+  {
     id: 6,
     title: 'From Bing Search to Akira: BumbleBee + AdaptixC2 Intrusion Deep Dive (DFIR Report)',
     excerpt: 'Exhaustive analysis of the DFIR Report case where SEO poisoning delivered BumbleBee, AdaptixC2 enabled hands-on-keyboard operations, and Akira ransomware impacted both root and child domains. Includes timeline, TTP mapping, IOCs, and defender actions.',
