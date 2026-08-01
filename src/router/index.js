@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
 
 const BASE = 'julichaan'
 
@@ -8,7 +7,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      component: Home,
+      component: () => import('../views/Home.vue'),
       meta: {
         title: {
           es: `${BASE} | Investigador de Seguridad y Bug Bounty Hunter`,

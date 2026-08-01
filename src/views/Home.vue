@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
-import Live2DAvatar from '../components/Live2DAvatar.vue'
+import { ref, onMounted, onUnmounted, watch, computed, defineAsyncComponent } from 'vue'
 import { useLanguage } from '../composables/useLanguage'
+
+const Live2DAvatar = defineAsyncComponent(() => import('../components/Live2DAvatar.vue'))
 
 const typingText = ref('')
 const { isSpanish, toggleLanguage, language } = useLanguage()

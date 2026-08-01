@@ -224,11 +224,11 @@ watch(titleMessage, () => {
             <div class="space-y-5">
               <div v-for="job in experience" :key="job.role" class="exp-card text-center">
                 <div class="flex flex-col items-center gap-1 mb-1">
-                  <span class="font-bold text-white text-sm">{{ job.role }}</span>
-                  <span class="text-xs tabular-nums" style="color:#00ff9f">{{ job.period }}</span>
+                  <span class="font-bold text-white text-base md:text-[1.02rem]">{{ job.role }}</span>
+                  <span class="text-sm tabular-nums" style="color:#00ff9f">{{ job.period }}</span>
                 </div>
-                <p class="text-xs mb-2" style="color:#ff003c">{{ job.company }}</p>
-                <p class="text-xs text-gray-500 leading-relaxed">{{ job.desc }}</p>
+                <p class="text-sm mb-2" style="color:#ff003c">{{ job.company }}</p>
+                <p class="text-sm text-gray-500 leading-relaxed">{{ job.desc }}</p>
               </div>
             </div>
           </section>
@@ -238,23 +238,11 @@ watch(titleMessage, () => {
             <div class="space-y-4">
               <div v-for="edu in education" :key="edu.title" class="exp-card text-center">
                 <div class="flex flex-col items-center gap-1">
-                  <span class="font-bold text-white text-sm">{{ edu.title }}</span>
-                  <span class="text-xs tabular-nums" style="color:#00ff9f">{{ edu.period }}</span>
+                  <span class="font-bold text-white text-base md:text-[1.02rem]">{{ edu.title }}</span>
+                  <span class="text-sm tabular-nums" style="color:#00ff9f">{{ edu.period }}</span>
                 </div>
-                <p class="text-xs mt-1" style="color:#ff003c">{{ edu.center }}</p>
+                <p class="text-sm mt-1" style="color:#ff003c">{{ edu.center }}</p>
               </div>
-            </div>
-          </section>
-
-          <section class="pt-3 md:pt-6">
-            <h2 class="section-title text-center">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
-            <div class="grid-certifications">
-              <article v-for="cert in certifications" :key="cert.name" class="cert-card">
-                <img :src="cert.image" :alt="cert.name" class="cert-image" loading="lazy" />
-                <h3 class="text-sm font-bold text-white mt-3">{{ cert.name }}</h3>
-                <p class="text-xs mt-1 text-gray-400">{{ cert.detail }}</p>
-                <p class="text-xs mt-1" style="color:#00ff9f">{{ cert.issuer }}</p>
-              </article>
             </div>
           </section>
         </div>
@@ -279,9 +267,21 @@ watch(titleMessage, () => {
             </div>
           </section>
 
+          <section class="pt-2 md:pt-4">
+            <h2 class="section-title text-center">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
+            <div class="grid-certifications">
+              <article v-for="cert in certifications" :key="cert.name" class="cert-card">
+                <img :src="cert.image" :alt="cert.name" class="cert-image" loading="lazy" decoding="async" fetchpriority="low" />
+                <h3 class="text-sm md:text-base font-bold text-white mt-3">{{ cert.name }}</h3>
+                <p class="text-sm mt-1 text-gray-400">{{ cert.detail }}</p>
+                <p class="text-sm mt-1" style="color:#00ff9f">{{ cert.issuer }}</p>
+              </article>
+            </div>
+          </section>
+
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'CONTACTO' : 'CONTACT' }}</h2>
-            <div class="space-y-2 text-xs text-center" style="color:#555">
+            <div class="space-y-2 text-sm text-center" style="color:#555">
               <p><span style="color:#00ff9f">$</span> {{ isSpanish ? 'ubicación' : 'location' }}   → {{ profile.location }}</p>
               <p><span style="color:#00ff9f">$</span> {{ isSpanish ? 'correo' : 'email' }}      →
                 <a :href="'mailto:' + profile.email" class="hover:text-gray-300 transition-colors">{{ profile.email }}</a>
@@ -330,7 +330,7 @@ watch(titleMessage, () => {
 }
 
 .section-title {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.28em;
   color: #ff003c;
@@ -340,7 +340,7 @@ watch(titleMessage, () => {
 }
 
 .label-cat {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   letter-spacing: 0.15em;
   color: #ff003c88;
   margin-bottom: 0.5rem;
@@ -358,8 +358,8 @@ watch(titleMessage, () => {
 }
 
 .skill-tag {
-  font-size: 0.65rem;
-  padding: 0.18rem 0.5rem;
+  font-size: 0.75rem;
+  padding: 0.24rem 0.6rem;
   border: 1px solid #00ff9f33;
   color: #00ff9f;
   background: #00ff9f0a;
@@ -405,7 +405,7 @@ watch(titleMessage, () => {
 
 .cert-image {
   width: 100%;
-  height: 120px;
+  height: 108px;
   object-fit: contain;
   border-radius: 3px;
   border: 1px solid #ffffff14;
