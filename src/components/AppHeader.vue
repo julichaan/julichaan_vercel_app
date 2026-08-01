@@ -35,6 +35,7 @@ onMounted(async () => {
 onUnmounted(() => { stopped = true })
 
 const NAV = computed(() => [
+  { label: isSpanish.value ? 'Sobre mí' : 'About', path: '/about' },
   { label: 'Writeups', path: '/writeups' },
   { label: 'Blog', path: '/blog' },
   { label: isSpanish.value ? 'Notas' : 'Notes', path: '/notes' },

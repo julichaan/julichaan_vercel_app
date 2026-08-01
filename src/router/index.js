@@ -22,6 +22,14 @@ const router = createRouter({
       meta: { layout: 'default', title: `Writeups · ${BASE}` }
     },
     {
+      path: '/about',
+      component: () => import('../views/CV.vue'),
+      meta: {
+        layout: 'default',
+        title: { es: `Sobre mí · ${BASE}`, en: `About · ${BASE}` },
+      },
+    },
+    {
       path: '/blog',
       component: () => import('../views/Blog.vue'),
       meta: { layout: 'default', title: `Blog · ${BASE}` }
