@@ -192,7 +192,7 @@ watch(titleMessage, () => {
 
 <template>
   <div class="font-mono bg-black text-gray-300 min-h-screen">
-    <div class="max-w-[1600px] mx-auto px-6 py-12 md:py-14">
+    <div class="mx-auto w-full max-w-none px-4 py-12 md:px-8 lg:px-12 md:py-14">
       <header class="mb-10 md:mb-12 pb-8 border-b text-center" style="border-color:#ff003c33">
         <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// cv</p>
 
@@ -217,7 +217,7 @@ watch(titleMessage, () => {
         </div>
       </header>
 
-      <div class="cv-grid max-w-[1500px] mx-auto">
+      <div class="cv-grid w-full max-w-none mx-auto">
         <div class="space-y-12 md:space-y-14">
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
@@ -312,8 +312,8 @@ watch(titleMessage, () => {
 @media (min-width: 1200px) {
   .cv-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(380px, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1.55fr) minmax(420px, 1fr);
+    gap: 1.25rem;
     align-items: start;
   }
 }
