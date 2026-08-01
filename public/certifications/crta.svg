@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="CRTA badge">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#101012"/>
+      <stop offset="100%" stop-color="#1e1533"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect x="22" y="22" width="596" height="316" rx="14" fill="none" stroke="#a287ff" stroke-width="3"/>
+  <text x="56" y="90" fill="#c8b9ff" font-family="monospace" font-size="22">Altered Security</text>
+  <text x="56" y="175" fill="#f7f3ff" font-family="monospace" font-size="64" font-weight="700">CRTA</text>
+  <text x="56" y="235" fill="#bcadff" font-family="monospace" font-size="24">Certified Red Team Analyst</text>
+  <text x="56" y="292" fill="#8b79c9" font-family="monospace" font-size="18">julichaan certifications</text>
+</svg>

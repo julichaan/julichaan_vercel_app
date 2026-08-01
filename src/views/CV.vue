@@ -36,41 +36,81 @@ const profile = computed(() => isSpanish.value ? {
 
 const experience = computed(() => isSpanish.value ? [
   {
-    role: 'Security Researcher (Bug Bounty)',
-    company: 'Freelance',
+    role: 'IT Engineer',
+    company: 'ALTEN Spain',
+    period: 'Actualidad',
+    desc: 'Ingeniería IT con foco en ciberseguridad aplicada, hardening operativo y soporte técnico en entornos empresariales.',
+  },
+  {
+    role: 'Threat Hunter · Ethical Hacker · Bug Bounty Hunter',
+    company: 'Independent',
     period: '2023 — presente',
-    desc: 'Investigación de vulnerabilidades en programas públicos y privados. Enfoque en IDOR, XSS, SSRF y lógica de negocio.',
-  },
-  {
-    role: 'Analista de Ciberseguridad Jr.',
-    company: 'TechSec S.L.',
-    period: '2022 — 2023',
-    desc: 'Pentesting web y de infraestructura para clientes PYME. Informes técnicos y ejecutivos. Hardening de servidores Linux.',
-  },
-  {
-    role: 'Becario de Desarrollo',
-    company: 'StartupXYZ',
-    period: '2021 — 2022',
-    desc: 'Desarrollo frontend con Vue.js. Primer contacto con DevSecOps e integración de SAST en CI/CD.',
+    desc: 'Investigación de vulnerabilidades web/API, análisis ofensivo y generación de reportes técnicos para programas de seguridad.',
   },
 ] : [
   {
-    role: 'Security Researcher (Bug Bounty)',
-    company: 'Freelance',
+    role: 'IT Engineer',
+    company: 'ALTEN Spain',
+    period: 'Present',
+    desc: 'IT engineering work with a focus on applied cybersecurity, operational hardening, and enterprise technical support.',
+  },
+  {
+    role: 'Threat Hunter · Ethical Hacker · Bug Bounty Hunter',
+    company: 'Independent',
     period: '2023 — present',
-    desc: 'Vulnerability research across public and private programs. Focus on IDOR, XSS, SSRF, and business logic.',
+    desc: 'Web/API vulnerability research, offensive analysis, and technical reporting for security programs.',
+  },
+])
+
+const certifications = computed(() => isSpanish.value ? [
+  {
+    name: 'eJPT',
+    detail: 'eLearnSecurity Junior Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ejpt.svg',
   },
   {
-    role: 'Junior Cybersecurity Analyst',
-    company: 'TechSec S.L.',
-    period: '2022 — 2023',
-    desc: 'Web and infrastructure penetration testing for SMB clients. Technical and executive reporting. Linux server hardening.',
+    name: 'eCPPT',
+    detail: 'eLearnSecurity Certified Professional Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ecppt.svg',
   },
   {
-    role: 'Development Intern',
-    company: 'StartupXYZ',
-    period: '2021 — 2022',
-    desc: 'Frontend development with Vue.js. First exposure to DevSecOps and SAST integration in CI/CD.',
+    name: 'CRTA',
+    detail: 'Certified Red Team Analyst',
+    issuer: 'Altered Security',
+    image: '/certifications/crta.svg',
+  },
+  {
+    name: 'Web-RTA',
+    detail: 'Web Red Team Analyst',
+    issuer: 'Web Security Program',
+    image: '/certifications/web-rta.svg',
+  },
+] : [
+  {
+    name: 'eJPT',
+    detail: 'eLearnSecurity Junior Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ejpt.svg',
+  },
+  {
+    name: 'eCPPT',
+    detail: 'eLearnSecurity Certified Professional Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ecppt.svg',
+  },
+  {
+    name: 'CRTA',
+    detail: 'Certified Red Team Analyst',
+    issuer: 'Altered Security',
+    image: '/certifications/crta.svg',
+  },
+  {
+    name: 'Web-RTA',
+    detail: 'Web Red Team Analyst',
+    issuer: 'Web Security Program',
+    image: '/certifications/web-rta.svg',
   },
 ])
 
@@ -163,13 +203,13 @@ watch(titleMessage, () => {
         <div class="space-y-10">
           <section>
             <h2 class="section-title">{{ isSpanish ? 'SOBRE MÍ' : 'ABOUT ME' }}</h2>
-            <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line">{{ profile.about }}</p>
+            <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line text-center max-w-3xl mx-auto">{{ profile.about }}</p>
           </section>
 
           <section>
             <h2 class="section-title">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
             <div class="space-y-4">
-              <div v-for="job in experience" :key="job.role" class="exp-card">
+              <div v-for="job in experience" :key="job.role" class="exp-card text-center">
                 <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
                   <span class="font-bold text-white text-sm">{{ job.role }}</span>
                   <span class="text-xs tabular-nums shrink-0" style="color:#00ff9f">{{ job.period }}</span>
@@ -195,6 +235,18 @@ watch(titleMessage, () => {
         </div>
 
         <div class="space-y-10">
+          <section>
+            <h2 class="section-title">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
+            <div class="grid-certifications">
+              <article v-for="cert in certifications" :key="cert.name" class="cert-card">
+                <img :src="cert.image" :alt="cert.name" class="cert-image" loading="lazy" />
+                <h3 class="text-sm font-bold text-white mt-3">{{ cert.name }}</h3>
+                <p class="text-xs mt-1 text-gray-400">{{ cert.detail }}</p>
+                <p class="text-xs mt-1" style="color:#00ff9f">{{ cert.issuer }}</p>
+              </article>
+            </div>
+          </section>
+
           <section>
             <h2 class="section-title">{{ isSpanish ? 'HABILIDADES' : 'SKILLS' }}</h2>
 
@@ -246,6 +298,12 @@ watch(titleMessage, () => {
   gap: 2.5rem;
 }
 
+@media (min-width: 1024px) {
+  .cv-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .section-title {
   font-size: 0.6rem;
   font-weight: 900;
@@ -286,5 +344,32 @@ watch(titleMessage, () => {
 }
 .skill-tag:hover {
   background: #00ff9f18;
+}
+
+.grid-certifications {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .grid-certifications {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.cert-card {
+  padding: 0.7rem;
+  border: 1px solid #ffffff0f;
+  background: #070707;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.cert-image {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  border: 1px solid #ffffff14;
 }
 </style>
