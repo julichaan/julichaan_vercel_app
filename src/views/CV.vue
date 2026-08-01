@@ -19,9 +19,6 @@ const profile = computed(() => isSpanish.value ? {
   email: 'julichaan@proton.me',
   github: 'github.com/julichaan',
   linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
-  about:
-    'Soy ingeniero IT y profesional de ciberseguridad en Madrid, con enfoque en threat hunting, ethical hacking y bug bounty. Mi forma de trabajar combina mentalidad ofensiva con disciplina de análisis: identificar señales débiles, entender el contexto técnico y transformarlo en hallazgos accionables para reducir riesgo real.\n\n' +
-    'Mi especialidad está en entornos donde confluyen lógica de negocio, control de acceso y superficie web/API. Me interesan especialmente las vulnerabilidades que parecen menores en aislamiento, pero que encadenadas explican impacto de negocio. Además, mantengo una práctica continua en CTF y writeups para reforzar investigación, reporting técnico y criterio de priorización.',
 } : {
   name: 'Julián Espada Rodríguez',
   alias: 'julichaan',
@@ -29,9 +26,6 @@ const profile = computed(() => isSpanish.value ? {
   email: 'julichaan@proton.me',
   github: 'github.com/julichaan',
   linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
-  about:
-    'I am an IT Engineer and cybersecurity professional based in Madrid, focused on threat hunting, ethical hacking, and bug bounty research. My approach blends offensive thinking with analytical discipline: identify weak signals, understand technical context, and turn findings into actionable security decisions that reduce real risk.\n\n' +
-    'I perform best in areas where business logic, access control, and web/API attack surface converge. I am especially interested in vulnerabilities that look minor in isolation but become high-impact when chained. I also keep an active CTF/writeup routine to sharpen research depth, technical reporting, and triage judgment.',
 })
 
 const experience = computed(() => isSpanish.value ? [
@@ -202,7 +196,7 @@ watch(titleMessage, () => {
       <header class="mb-10 md:mb-12 pb-8 border-b text-center" style="border-color:#ff003c33">
         <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// cv</p>
 
-        <h1 class="text-3xl md:text-5xl font-black tracking-wide mb-4" style="color:#ff003c">
+        <h1 class="text-2xl md:text-4xl font-black tracking-wide mb-4" style="color:#ff003c">
           {{ profile.name }}
         </h1>
 
@@ -223,13 +217,8 @@ watch(titleMessage, () => {
         </div>
       </header>
 
-      <div class="cv-grid max-w-4xl mx-auto">
+      <div class="cv-grid max-w-5xl mx-auto">
         <div class="space-y-12 md:space-y-14">
-          <section>
-            <h2 class="section-title text-center">{{ isSpanish ? 'SOBRE MÍ' : 'ABOUT ME' }}</h2>
-            <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line text-center max-w-3xl mx-auto">{{ profile.about }}</p>
-          </section>
-
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
             <div class="space-y-5">
@@ -257,7 +246,7 @@ watch(titleMessage, () => {
             </div>
           </section>
 
-          <section>
+          <section class="pt-3 md:pt-6">
             <h2 class="section-title text-center">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
             <div class="grid-certifications">
               <article v-for="cert in certifications" :key="cert.name" class="cert-card">
