@@ -198,11 +198,11 @@ watch(titleMessage, () => {
 
 <template>
   <div class="font-mono bg-black text-gray-300 min-h-screen">
-    <div class="max-w-5xl mx-auto px-6 py-14">
-      <header class="mb-12 pb-8 border-b text-center" style="border-color:#ff003c33">
+    <div class="max-w-5xl mx-auto px-6 py-12 md:py-14">
+      <header class="mb-10 md:mb-12 pb-8 border-b text-center" style="border-color:#ff003c33">
         <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// cv</p>
 
-        <h1 class="text-5xl md:text-6xl font-black tracking-widest mb-4" style="color:#ff003c">
+        <h1 class="text-3xl md:text-5xl font-black tracking-wide mb-4" style="color:#ff003c">
           {{ profile.name }}
         </h1>
 
@@ -224,7 +224,7 @@ watch(titleMessage, () => {
       </header>
 
       <div class="cv-grid max-w-4xl mx-auto">
-        <div class="space-y-10">
+        <div class="space-y-12 md:space-y-14">
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'SOBRE MÍ' : 'ABOUT ME' }}</h2>
             <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line text-center max-w-3xl mx-auto">{{ profile.about }}</p>
@@ -232,7 +232,7 @@ watch(titleMessage, () => {
 
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div v-for="job in experience" :key="job.role" class="exp-card text-center">
                 <div class="flex flex-col items-center gap-1 mb-1">
                   <span class="font-bold text-white text-sm">{{ job.role }}</span>
@@ -246,7 +246,7 @@ watch(titleMessage, () => {
 
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'EDUCACIÓN' : 'EDUCATION' }}</h2>
-            <div class="space-y-3">
+            <div class="space-y-4">
               <div v-for="edu in education" :key="edu.title" class="exp-card text-center">
                 <div class="flex flex-col items-center gap-1">
                   <span class="font-bold text-white text-sm">{{ edu.title }}</span>
@@ -319,12 +319,12 @@ watch(titleMessage, () => {
 }
 
 .section-title {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 900;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.28em;
   color: #ff003c;
-  margin-bottom: 0.9rem;
-  padding-bottom: 0.35rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.45rem;
   border-bottom: 1px solid #ff003c22;
 }
 
@@ -336,7 +336,7 @@ watch(titleMessage, () => {
 }
 
 .exp-card {
-  padding: 0.7rem 0.9rem;
+  padding: 1rem 1.1rem;
   border: 1px solid #ffffff07;
   background: #080808;
   border-radius: 4px;
@@ -363,7 +363,7 @@ watch(titleMessage, () => {
 .grid-certifications {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.9rem;
+  gap: 1rem;
 }
 
 @media (min-width: 640px) {
@@ -379,7 +379,7 @@ watch(titleMessage, () => {
 }
 
 .cert-card {
-  padding: 0.7rem;
+  padding: 0.95rem;
   border: 1px solid #ffffff0f;
   background: #070707;
   border-radius: 4px;
