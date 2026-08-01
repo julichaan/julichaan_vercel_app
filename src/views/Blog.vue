@@ -152,7 +152,7 @@ const postsEn = ref([
   {
     id: 7,
     title: 'Dotfiles State Tampering: Redacted Bug Bounty Case',
-    excerpt: 'A bug bounty field note based on a real finding: insecure directory creation permissions (0o777) around local state storage, enabling tampering under permissive umask setups.',
+    excerpt: 'A bug bounty note based on a real finding: insecure directory creation permissions (0o777) around local state storage, enabling tampering under permissive umask setups.',
     date: 'August 2026',
     category: 'Bug Bounty Diary',
     cvss: '2.0',
