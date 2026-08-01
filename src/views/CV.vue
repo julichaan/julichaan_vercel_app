@@ -1,112 +1,206 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
 
-// ── Typing effect ──────────────────────────────────────────────
+const { isSpanish } = useLanguage()
+
 const typingText = ref('')
-const MSG = 'Security Researcher & Hacker'
-let stopped = false
+const stopped = ref(false)
+let runId = 0
 
-onMounted(async () => {
-  const typeLoop = async () => {
-    for (let i = 0; i <= MSG.length; i++) {
-      if (stopped) return
-      typingText.value = MSG.slice(0, i)
-      await new Promise(r => setTimeout(r, 70))
-    }
-    await new Promise(r => setTimeout(r, 2400))
-    if (stopped) return
-    for (let i = MSG.length; i >= 0; i--) {
-      if (stopped) return
-      typingText.value = MSG.slice(0, i)
-      await new Promise(r => setTimeout(r, 35))
-    }
-    await new Promise(r => setTimeout(r, 500))
-    if (!stopped) typeLoop()
-  }
-  typeLoop()
-})
-onUnmounted(() => { stopped = true })
+const titleMessage = computed(() => (
+  isSpanish.value ? 'Ingeniero IT, threat hunter y ethical hacker' : 'IT Engineer, Threat Hunter & Ethical Hacker'
+))
 
-// ── Datos ─────────────────────────────────────────────────────
-const profile = {
-  name:     'Julia Chan',
-  alias:    'julichaan',
+const profile = computed(() => isSpanish.value ? {
+  name: 'Julián Espada Rodríguez',
+  alias: 'julichaan',
   location: 'Madrid, España',
-  email:    'julichaan@proton.me',
-  github:   'github.com/julichaan',
-  linkedin: 'linkedin.com/in/julichaan',
-  about:
-    'Soy un ingeniero de ciberseguridad de 27 años apasionado por mi trabajo, especializado en Red Team y Pentesting. Mi objetivo es proteger la integridad y la confidencialidad de los sistemas de información mediante análisis proactivos y simulaciones de ataques. Con una sólida formación académica y diversas certificaciones reconocidas por la industria, me dedico a identificar y mitigar vulnerabilidades antes de que puedan ser explotadas.\n\n' +
-    'Mis competencias principales incluyen:\n' +
-    'Red Team: Simulación de ataques del mundo real para evaluar y mejorar la postura de seguridad de las organizaciones.\n' +
-    'Pentesting: Realización de pruebas de penetración detalladas para identificar y remediar fallos de seguridad.\n' +
-    'Análisis de vulnerabilidades: Evaluación de sistemas y aplicaciones para descubrir y mitigar riesgos.\n' +
-    'Respuesta a incidentes: Desarrollo e implementación de planes de respuesta para mitigar el impacto de los incidentes de seguridad.\n\n' +
-    'En mi tiempo libre, disfruto resolviendo retos CTF (Capture The Flag) y aprendiendo constantemente sobre nuevas vulnerabilidades. La ciberseguridad no es solo mi profesión; es mi pasión.',
-}
+  email: 'julian.espada.business@gmail.com',
+  github: 'github.com/julichaan',
+  linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
+} : {
+  name: 'Julián Espada Rodríguez',
+  alias: 'julichaan',
+  location: 'Madrid, Spain',
+  email: 'julian.espada.business@gmail.com',
+  github: 'github.com/julichaan',
+  linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
+})
 
-const experience = [
+const experience = computed(() => isSpanish.value ? [
   {
-    role:    'Security Researcher (Bug Bounty)',
-    company: 'Freelance',
-    period:  '2023 — presente',
-    desc:    'Investigación de vulnerabilidades en programas públicos y privados. Enfoque en IDOR, XSS, SSRF y lógica de negocio.',
+    role: 'Threat Hunter and Deception - Telefonica Tech',
+    company: 'ALTEN Spain · Jornada completa',
+    period: 'abr. 2026 — actualidad · En remoto',
+    desc: 'Equipo de Threat Hunting de Telefonica Tech. Threat hunter multiclientelar con Cortex XDR, Microsoft Defender for Endpoint, Cytomic Orion y CrowdStrike.',
   },
   {
-    role:    'Analista de Ciberseguridad Jr.',
-    company: 'TechSec S.L.',
-    period:  '2022 — 2023',
-    desc:    'Pentesting web y de infraestructura para clientes PYME. Informes técnicos y ejecutivos. Hardening de servidores Linux.',
+    role: 'Bug Bounty Hunter',
+    company: 'Secur0 · Profesional independiente',
+    period: 'sept. 2025 — actualidad',
+    desc: 'Hunting de bugs y vulnerabilidades en la plataforma Secur0.',
   },
   {
-    role:    'Becaria de Desarrollo',
-    company: 'StartupXYZ',
-    period:  '2021 — 2022',
-    desc:    'Desarrollo frontend con Vue.js. Primer contacto con DevSecOps e integración de SAST en CI/CD.',
+    role: 'Cybersecurity Engineer',
+    company: 'Isdefe · Jornada completa',
+    period: 'jun. 2023 — abr. 2026 · Presencial',
+    desc: 'Proyecto de ciberseguridad en el Mando Conjunto del Ciberespacio.',
   },
-]
+  {
+    role: 'Cybersecurity Engineer',
+    company: 'Mando Conjunto del Ciberespacio (MCCE) · Jornada completa',
+    period: 'jun. 2023 — abr. 2026 · Presencial',
+    desc: 'Analista SOC y posteriormente ingeniero en proyecto 5G. Tecnologías: ArcSight, Cortex XDR, Splunk, Tenable y herramientas CCN (Lucia, Reyes y Carmen).',
+  },
+] : [
+  {
+    role: 'Threat Hunter and Deception - Telefonica Tech',
+    company: 'ALTEN Spain · Full-time',
+    period: 'Apr 2026 — present · Remote',
+    desc: 'Part of Telefonica Tech threat hunting team. Multi-client threat hunter using Cortex XDR, Microsoft Defender for Endpoint, Cytomic Orion, and CrowdStrike.',
+  },
+  {
+    role: 'Bug Bounty Hunter',
+    company: 'Secur0 · Independent',
+    period: 'Sep 2025 — present',
+    desc: 'Hunting bugs and vulnerabilities on the Secur0 platform.',
+  },
+  {
+    role: 'Cybersecurity Engineer',
+    company: 'Isdefe · Full-time',
+    period: 'Jun 2023 — Apr 2026 · On-site',
+    desc: 'Worked on the cybersecurity project for Mando Conjunto del Ciberespacio.',
+  },
+  {
+    role: 'Cybersecurity Engineer',
+    company: 'Mando Conjunto del Ciberespacio (MCCE) · Full-time',
+    period: 'Jun 2023 — Apr 2026 · On-site',
+    desc: 'SOC analyst and later engineer in a 5G project. Stack: ArcSight, Cortex XDR, Splunk, Tenable, and CCN tools (Lucia, Reyes, Carmen).',
+  },
+])
 
-const education = [
+const certifications = computed(() => isSpanish.value ? [
   {
-    title:  'Grado en Ingeniería Informática',
-    center: 'Universidad Autónoma de Madrid',
-    period: '2018 — 2022',
+    name: 'eJPT',
+    detail: 'eLearnSecurity Junior Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ejpt.png',
   },
   {
-    title:  'Máster en Ciberseguridad',
-    center: 'UEM — Universidad Europea de Madrid',
-    period: '2022 — 2023',
+    name: 'eCPPT',
+    detail: 'eLearnSecurity Certified Professional Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ecppt.png',
   },
-]
+  {
+    name: 'CRTA',
+    detail: 'Certified Red Team Analyst',
+    issuer: 'Altered Security',
+    image: '/certifications/crta.png',
+  },
+  {
+    name: 'Web-RTA',
+    detail: 'Web Red Team Analyst',
+    issuer: 'Web Security Program',
+    image: '/certifications/webrta.png',
+  },
+] : [
+  {
+    name: 'eJPT',
+    detail: 'eLearnSecurity Junior Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ejpt.png',
+  },
+  {
+    name: 'eCPPT',
+    detail: 'eLearnSecurity Certified Professional Penetration Tester',
+    issuer: 'INE Security',
+    image: '/certifications/ecppt.png',
+  },
+  {
+    name: 'CRTA',
+    detail: 'Certified Red Team Analyst',
+    issuer: 'Altered Security',
+    image: '/certifications/crta.png',
+  },
+  {
+    name: 'Web-RTA',
+    detail: 'Web Red Team Analyst',
+    issuer: 'Web Security Program',
+    image: '/certifications/webrta.png',
+  },
+])
 
-const certs = [
-  { name: 'eJPT — eLearnSecurity Junior Penetration Tester', year: '2022' },
-  { name: 'CEH — Certified Ethical Hacker',                  year: '2023' },
-  { name: 'OSCP — Offensive Security Certified Professional', year: '2024' },
-  { name: 'HTB Pro Hacker Rank',                             year: '2024' },
-]
+const education = computed(() => isSpanish.value ? [
+  { title: 'Grado en Ingeniería Informática', center: 'Universidad Autónoma de Madrid', period: '2018 — 2022' },
+  { title: 'Máster en Ciberseguridad', center: 'ITTI High Institute', period: '2022 — 2023' },
+] : [
+  { title: 'BSc in Computer Engineering', center: 'Autonomous University of Madrid', period: '2018 — 2022' },
+  { title: 'Master’s in Cybersecurity', center: 'ITTI High Institute', period: '2022 — 2023' },
+])
 
-const skills = {
-  ofensivo:  ['Burp Suite', 'Metasploit', 'SQLMap', 'Nmap', 'Ffuf', 'Nuclei', 'CrackMapExec'],
+const skills = computed(() => isSpanish.value ? {
+  ofensivo: ['Burp Suite', 'Metasploit', 'SQLMap', 'Nmap', 'Ffuf', 'Nuclei', 'CrackMapExec'],
   lenguajes: ['Python', 'Bash', 'JavaScript', 'SQL', 'PowerShell'],
-  otros:     ['Linux', 'Docker', 'Git', 'AWS basics', 'OWASP Top 10', 'CVE Research'],
+  otros: ['Linux', 'Docker', 'Git', 'nociones de AWS', 'OWASP Top 10', 'investigación de CVEs'],
+} : {
+  ofensivo: ['Burp Suite', 'Metasploit', 'SQLMap', 'Nmap', 'Ffuf', 'Nuclei', 'CrackMapExec'],
+  lenguajes: ['Python', 'Bash', 'JavaScript', 'SQL', 'PowerShell'],
+  otros: ['Linux', 'Docker', 'Git', 'AWS basics', 'OWASP Top 10', 'CVE research'],
+})
+
+const startTyping = () => {
+  runId += 1
+  const currentRun = runId
+  const message = titleMessage.value
+  typingText.value = ''
+
+  const typeLoop = async () => {
+    for (let i = 0; i <= message.length; i++) {
+      if (stopped.value || currentRun !== runId) return
+      typingText.value = message.slice(0, i)
+      await new Promise((resolve) => setTimeout(resolve, 70))
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2200))
+    if (stopped.value || currentRun !== runId) return
+    for (let i = message.length; i >= 0; i--) {
+      if (stopped.value || currentRun !== runId) return
+      typingText.value = message.slice(0, i)
+      await new Promise((resolve) => setTimeout(resolve, 35))
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    if (!stopped.value && currentRun === runId) typeLoop()
+  }
+
+  typeLoop()
 }
+
+onMounted(() => {
+  startTyping()
+})
+
+onUnmounted(() => {
+  stopped.value = true
+  runId += 1
+})
+
+watch(titleMessage, () => {
+  if (!stopped.value) startTyping()
+})
 </script>
 
 <template>
   <div class="font-mono bg-black text-gray-300 min-h-screen">
-    <div class="max-w-5xl mx-auto px-6 py-14">
+    <div class="max-w-5xl mx-auto px-6 py-12 md:py-14">
+      <header class="mb-10 md:mb-12 pb-8 border-b text-center" style="border-color:#ff003c33">
+        <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// cv</p>
 
-      <!-- ══ HEADER ════════════════════════════════════════════════ -->
-      <header class="mb-12 pb-8 border-b" style="border-color:#ff003c33">
-        <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// curriculum vitae</p>
-
-        <h1 class="text-5xl md:text-6xl font-black tracking-widest mb-4" style="color:#ff003c">
+        <h1 class="text-2xl md:text-4xl font-black tracking-wide mb-4" style="color:#ff003c">
           {{ profile.name }}
         </h1>
 
-        <!-- Prompt con typing -->
-        <div class="flex flex-wrap items-center gap-0 text-lg md:text-xl mb-5 select-none">
+        <div class="flex flex-wrap items-center justify-center gap-0 text-lg md:text-xl mb-5 select-none">
           <span style="color:#ff003c">julichaan</span>
           <span class="text-gray-600">@</span>
           <span style="color:#ff003c">cv</span>
@@ -115,40 +209,23 @@ const skills = {
           <span class="animate-pulse" style="color:#00ff9f">▌</span>
         </div>
 
-        <!-- Contacto en línea -->
-        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs" style="color:#555">
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs" style="color:#555">
           <span>📍 {{ profile.location }}</span>
-          <a :href="'mailto:' + profile.email"
-             class="hover:text-gray-300 transition-colors">✉ {{ profile.email }}</a>
-          <a :href="'https://' + profile.github"
-             target="_blank" rel="noopener"
-             class="hover:text-gray-300 transition-colors">⌥ {{ profile.github }}</a>
-          <a :href="'https://' + profile.linkedin"
-             target="_blank" rel="noopener"
-             class="hover:text-gray-300 transition-colors">⌥ {{ profile.linkedin }}</a>
+          <a :href="'mailto:' + profile.email" class="hover:text-gray-300 transition-colors">✉ {{ profile.email }}</a>
+          <a :href="'https://' + profile.github" target="_blank" rel="noopener" class="hover:text-gray-300 transition-colors">⌥ {{ profile.github }}</a>
+          <a :href="'https://' + profile.linkedin" target="_blank" rel="noopener" class="hover:text-gray-300 transition-colors">⌥ {{ profile.linkedin }}</a>
         </div>
       </header>
 
-      <!-- ══ GRID DOS COLUMNAS ══════════════════════════════════════ -->
-      <div class="cv-grid">
-
-        <!-- ── COLUMNA IZQUIERDA (principal) ── -->
-        <div class="space-y-10">
-
-          <!-- SOBRE MÍ -->
+      <div class="cv-grid max-w-5xl mx-auto">
+        <div class="space-y-12 md:space-y-14">
           <section>
-            <h2 class="section-title">SOBRE MÍ</h2>
-            <p class="text-sm leading-relaxed text-gray-400 whitespace-pre-line">{{ profile.about }}</p>
-          </section>
-
-          <!-- EXPERIENCIA -->
-          <section>
-            <h2 class="section-title">EXPERIENCIA</h2>
-            <div class="space-y-4">
-              <div v-for="job in experience" :key="job.role" class="exp-card">
-                <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
+            <h2 class="section-title text-center">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
+            <div class="space-y-5">
+              <div v-for="job in experience" :key="job.role" class="exp-card text-center">
+                <div class="flex flex-col items-center gap-1 mb-1">
                   <span class="font-bold text-white text-sm">{{ job.role }}</span>
-                  <span class="text-xs tabular-nums shrink-0" style="color:#00ff9f">{{ job.period }}</span>
+                  <span class="text-xs tabular-nums" style="color:#00ff9f">{{ job.period }}</span>
                 </div>
                 <p class="text-xs mb-2" style="color:#ff003c">{{ job.company }}</p>
                 <p class="text-xs text-gray-500 leading-relaxed">{{ job.desc }}</p>
@@ -156,69 +233,55 @@ const skills = {
             </div>
           </section>
 
-          <!-- EDUCACIÓN -->
           <section>
-            <h2 class="section-title">EDUCACIÓN</h2>
-            <div class="space-y-3">
-              <div v-for="edu in education" :key="edu.title" class="exp-card">
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 class="section-title text-center">{{ isSpanish ? 'EDUCACIÓN' : 'EDUCATION' }}</h2>
+            <div class="space-y-4">
+              <div v-for="edu in education" :key="edu.title" class="exp-card text-center">
+                <div class="flex flex-col items-center gap-1">
                   <span class="font-bold text-white text-sm">{{ edu.title }}</span>
-                  <span class="text-xs tabular-nums shrink-0" style="color:#00ff9f">{{ edu.period }}</span>
+                  <span class="text-xs tabular-nums" style="color:#00ff9f">{{ edu.period }}</span>
                 </div>
                 <p class="text-xs mt-1" style="color:#ff003c">{{ edu.center }}</p>
               </div>
             </div>
           </section>
 
-        </div>
+          <section class="pt-3 md:pt-6">
+            <h2 class="section-title text-center">{{ isSpanish ? 'CERTIFICACIONES' : 'CERTIFICATIONS' }}</h2>
+            <div class="grid-certifications">
+              <article v-for="cert in certifications" :key="cert.name" class="cert-card">
+                <img :src="cert.image" :alt="cert.name" class="cert-image" loading="lazy" />
+                <h3 class="text-sm font-bold text-white mt-3">{{ cert.name }}</h3>
+                <p class="text-xs mt-1 text-gray-400">{{ cert.detail }}</p>
+                <p class="text-xs mt-1" style="color:#00ff9f">{{ cert.issuer }}</p>
+              </article>
+            </div>
+          </section>
 
-        <!-- ── COLUMNA DERECHA (sidebar) ── -->
-        <div class="space-y-10">
-
-          <!-- HABILIDADES -->
           <section>
-            <h2 class="section-title">HABILIDADES</h2>
+            <h2 class="section-title text-center">{{ isSpanish ? 'HABILIDADES' : 'SKILLS' }}</h2>
 
-            <p class="label-cat">// ofensivo</p>
-            <div class="flex flex-wrap gap-2 mb-4">
+            <p class="label-cat text-center">{{ isSpanish ? '// ofensivo' : '// offensive' }}</p>
+            <div class="flex flex-wrap gap-2 mb-4 justify-center">
               <span v-for="s in skills.ofensivo" :key="s" class="skill-tag">{{ s }}</span>
             </div>
 
-            <p class="label-cat">// lenguajes</p>
-            <div class="flex flex-wrap gap-2 mb-4">
+            <p class="label-cat text-center">{{ isSpanish ? '// lenguajes' : '// languages' }}</p>
+            <div class="flex flex-wrap gap-2 mb-4 justify-center">
               <span v-for="s in skills.lenguajes" :key="s" class="skill-tag">{{ s }}</span>
             </div>
 
-            <p class="label-cat">// otros</p>
-            <div class="flex flex-wrap gap-2">
+            <p class="label-cat text-center">{{ isSpanish ? '// otros' : '// other' }}</p>
+            <div class="flex flex-wrap gap-2 justify-center">
               <span v-for="s in skills.otros" :key="s" class="skill-tag">{{ s }}</span>
             </div>
           </section>
 
-          <!-- CERTIFICACIONES -->
           <section>
-            <h2 class="section-title">CERTIFICACIONES</h2>
-            <ul class="space-y-2">
-              <li
-                v-for="cert in certs"
-                :key="cert.name"
-                class="flex items-start justify-between gap-3 border-l-2 pl-3 py-1"
-                style="border-color:#00ff9f33"
-              >
-                <span class="text-xs text-gray-300 leading-snug">
-                  <span style="color:#00ff9f" class="mr-1">▸</span>{{ cert.name }}
-                </span>
-                <span class="text-xs tabular-nums text-gray-600 shrink-0">{{ cert.year }}</span>
-              </li>
-            </ul>
-          </section>
-
-          <!-- CONTACTO / EXTRA -->
-          <section>
-            <h2 class="section-title">CONTACTO</h2>
-            <div class="space-y-2 text-xs" style="color:#555">
-              <p><span style="color:#00ff9f">$</span> location   → {{ profile.location }}</p>
-              <p><span style="color:#00ff9f">$</span> email      →
+            <h2 class="section-title text-center">{{ isSpanish ? 'CONTACTO' : 'CONTACT' }}</h2>
+            <div class="space-y-2 text-xs text-center" style="color:#555">
+              <p><span style="color:#00ff9f">$</span> {{ isSpanish ? 'ubicación' : 'location' }}   → {{ profile.location }}</p>
+              <p><span style="color:#00ff9f">$</span> {{ isSpanish ? 'correo' : 'email' }}      →
                 <a :href="'mailto:' + profile.email" class="hover:text-gray-300 transition-colors">{{ profile.email }}</a>
               </p>
               <p><span style="color:#00ff9f">$</span> github     →
@@ -229,40 +292,28 @@ const skills = {
               </p>
             </div>
           </section>
-
         </div>
-      </div><!-- /cv-grid -->
+      </div>
 
-      <!-- ══ FOOTER ════════════════════════════════════════════════ -->
       <footer class="text-center text-xs text-gray-700 border-t mt-14 pt-6" style="border-color:#ff003c22">
-        cat cv.pdf | strings | grep -i "hire me"
+        {{ isSpanish ? 'cat cv.pdf | strings | grep -i "contrátame"' : 'cat cv.pdf | strings | grep -i "hire me"' }}
       </footer>
-
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Layout dos columnas: 60/40 en desktop, apiladas en móvil */
 .cv-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-}
-@media (min-width: 768px) {
-  .cv-grid {
-    grid-template-columns: 3fr 2fr;
-    gap: 3rem;
-  }
+  display: block;
 }
 
 .section-title {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 900;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.28em;
   color: #ff003c;
-  margin-bottom: 0.9rem;
-  padding-bottom: 0.35rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.45rem;
   border-bottom: 1px solid #ff003c22;
 }
 
@@ -274,10 +325,10 @@ const skills = {
 }
 
 .exp-card {
-  padding: 0.7rem 0.9rem;
+  padding: 1rem 1.1rem;
   border: 1px solid #ffffff07;
   background: #080808;
-  border-radius: 2px;
+  border-radius: 4px;
   transition: border-color 0.2s;
 }
 .exp-card:hover {
@@ -296,5 +347,38 @@ const skills = {
 }
 .skill-tag:hover {
   background: #00ff9f18;
+}
+
+.grid-certifications {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid-certifications {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-certifications {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.cert-card {
+  padding: 0.95rem;
+  border: 1px solid #ffffff0f;
+  background: #070707;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.cert-image {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  border: 1px solid #ffffff14;
 }
 </style>

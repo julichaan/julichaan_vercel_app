@@ -1,37 +1,48 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import Live2DAvatar from '../components/Live2DAvatar.vue'
 import { useLanguage } from '../composables/useLanguage'
 
 const typingText = ref('')
 const { isSpanish, toggleLanguage, language } = useLanguage()
 let stopped = false
+let runId = 0
+
+const welcomeMessage = computed(() => (isSpanish.value ? 'Bienvenido a mi blog' : 'Welcome to my blog'))
+
+const typeLoop = async (id) => {
+  const message = welcomeMessage.value
+  for (let i = 0; i <= message.length; i++) {
+    if (stopped || id !== runId) return
+    typingText.value = message.slice(0, i)
+    await new Promise(r => setTimeout(r, 80))
+  }
+  await new Promise(r => setTimeout(r, 2200))
+  if (stopped || id !== runId) return
+  for (let i = message.length; i >= 0; i--) {
+    if (stopped || id !== runId) return
+    typingText.value = message.slice(0, i)
+    await new Promise(r => setTimeout(r, 40))
+  }
+  await new Promise(r => setTimeout(r, 500))
+  if (!stopped && id === runId) typeLoop(id)
+}
+
+const startTyping = () => {
+  runId += 1
+  typingText.value = ''
+  typeLoop(runId)
+}
 
 onMounted(async () => {
-  const typeLoop = async () => {
-    const message = isSpanish.value ? 'Bienvenido a mi blog' : 'Welcome to my blog'
-    for (let i = 0; i <= message.length; i++) {
-      if (stopped) return
-      typingText.value = message.slice(0, i)
-      await new Promise(r => setTimeout(r, 80))
-    }
-    await new Promise(r => setTimeout(r, 2200))
-    if (stopped) return
-    for (let i = message.length; i >= 0; i--) {
-      if (stopped) return
-      typingText.value = message.slice(0, i)
-      await new Promise(r => setTimeout(r, 40))
-    }
-    await new Promise(r => setTimeout(r, 500))
-    if (!stopped) typeLoop()
-  }
-  typeLoop()
+  startTyping()
 })
 
-onUnmounted(() => { stopped = true })
+onUnmounted(() => { stopped = true; runId += 1 })
 
-watch(isSpanish, () => {
-  typingText.value = ''
+watch(welcomeMessage, () => {
+  if (stopped) return
+  startTyping()
 })
 </script>
 

@@ -1,36 +1,53 @@
 <script setup>
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useLanguage } from '../composables/useLanguage'
 
 const router = useRouter()
 const input = ref('')
 const outputLines = ref([])
 const inputRef = ref(null)
 const outputRef = ref(null)
+const { isSpanish } = useLanguage()
 
-const PROMPT = 'visitor@blog:~$'
+const PROMPT = computed(() => (isSpanish.value ? 'visitante@blog:~$' : 'visitor@blog:~$'))
+
+const initScreen = () => {
+  outputLines.value = [
+    { text: '██████╗ ██╗   ██╗██████╗ ███████╗██████╗', type: 'ascii' },
+    { text: '██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗', type: 'ascii' },
+    { text: '██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝', type: 'ascii' },
+    { text: '██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗', type: 'ascii' },
+    { text: '╚██████╗   ██║   ██████╔╝███████╗██║  ██║', type: 'ascii' },
+    { text: ' ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝', type: 'ascii' },
+    { text: '', type: 'output' },
+    { text: isSpanish.value ? '  Portfolio de Ciberseguridad — v1.0.0' : '  Cybersecurity portfolio — v1.0.0', type: 'muted' },
+    { text: isSpanish.value ? '  Escribe "help" para ver los comandos disponibles.' : '  Type "help" to see the available commands.', type: 'muted' },
+    { text: '', type: 'output' },
+  ]
+}
 
 const COMMANDS = {
   help: {
     action: () => [
       { text: '', type: 'output' },
       { text: '╔══════════════════════════════════════════╗', type: 'border' },
-      { text: '║           COMANDOS DISPONIBLES           ║', type: 'border' },
+      { text: isSpanish.value ? '║           COMANDOS DISPONIBLES           ║' : '║           AVAILABLE COMMANDS             ║', type: 'border' },
       { text: '╚══════════════════════════════════════════╝', type: 'border' },
       { text: '', type: 'output' },
-      { text: '  help       →  Muestra esta lista de comandos', type: 'output' },
-      { text: '  enter      →  Próximamente...', type: 'output' },
-      { text: '  clear      →  Limpia la terminal', type: 'output' },
-      { text: '  back       →  Volver al inicio', type: 'output' },
+      { text: isSpanish.value ? '  help       →  Muestra esta lista de comandos' : '  help       →  Show this command list', type: 'output' },
+      { text: isSpanish.value ? '  enter      →  Próximamente...' : '  enter      →  Coming soon...', type: 'output' },
+      { text: isSpanish.value ? '  clear      →  Limpia la terminal' : '  clear      →  Clear the terminal', type: 'output' },
+      { text: isSpanish.value ? '  back       →  Volver al inicio' : '  back       →  Go back home', type: 'output' },
       { text: '', type: 'output' },
-      { text: '  Más comandos en desarrollo. Stay tuned.', type: 'muted' },
+      { text: isSpanish.value ? '  Más comandos en desarrollo. Stay tuned.' : '  More commands are in development. Stay tuned.', type: 'muted' },
       { text: '', type: 'output' },
     ]
   },
   enter: {
     action: () => [
       { text: '', type: 'output' },
-      { text: '  [ ACCESS PENDING ]  Este comando está en desarrollo.', type: 'warn' },
+      { text: isSpanish.value ? '  [ ACCESS PENDING ]  Este comando está en desarrollo.' : '  [ ACCESS PENDING ]  This command is under development.', type: 'warn' },
       { text: '', type: 'output' },
     ]
   },
@@ -77,7 +94,7 @@ const handleCommand = async () => {
   } else {
     outputLines.value.push(
       { text: '', type: 'output' },
-      { text: `  comando no encontrado: '${raw}'. Escribe 'help' para ver los comandos disponibles.`, type: 'error' },
+      { text: isSpanish.value ? `  comando no encontrado: '${raw}'. Escribe 'help' para ver los comandos disponibles.` : `  command not found: '${raw}'. Type 'help' to see the available commands.`, type: 'error' },
       { text: '', type: 'output' },
     )
   }
@@ -87,20 +104,13 @@ const handleCommand = async () => {
 }
 
 onMounted(async () => {
-  outputLines.value = [
-    { text: '██████╗ ██╗   ██╗██████╗ ███████╗██████╗', type: 'ascii' },
-    { text: '██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗', type: 'ascii' },
-    { text: '██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝', type: 'ascii' },
-    { text: '██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗', type: 'ascii' },
-    { text: '╚██████╗   ██║   ██████╔╝███████╗██║  ██║', type: 'ascii' },
-    { text: ' ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝', type: 'ascii' },
-    { text: '', type: 'output' },
-    { text: '  Portfolio de Ciberseguridad — v1.0.0', type: 'muted' },
-    { text: '  Escribe "help" para ver los comandos disponibles.', type: 'muted' },
-    { text: '', type: 'output' },
-  ]
+  initScreen()
   await nextTick()
   focusInput()
+})
+
+watch(isSpanish, () => {
+  initScreen()
 })
 </script>
 
@@ -118,7 +128,7 @@ onMounted(async () => {
         @mouseover="$event.target.style.textDecoration='underline'"
         @mouseleave="$event.target.style.textDecoration='none'"
       >
-        ← volver al inicio
+        {{ isSpanish ? '← volver al inicio' : '← back to home' }}
       </button>
     </div>
 
@@ -133,7 +143,7 @@ onMounted(async () => {
           <div class="w-3 h-3 rounded-full bg-red-500"></div>
           <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
           <div class="w-3 h-3 rounded-full bg-green-500"></div>
-          <span class="ml-4 text-gray-400 text-sm">visitor@blog: ~</span>
+          <span class="ml-4 text-gray-400 text-sm">{{ isSpanish ? 'visitante@blog: ~' : 'visitor@blog: ~' }}</span>
         </div>
 
         <!-- Cuerpo -->
@@ -182,7 +192,7 @@ onMounted(async () => {
       </div>
 
       <p class="text-center text-gray-600 text-xs mt-4 font-mono">
-        Escribe <span style="color:#ff003c">help</span> y pulsa Enter
+        {{ isSpanish ? 'Escribe' : 'Type' }} <span style="color:#ff003c">help</span> {{ isSpanish ? 'y pulsa Enter' : 'and press Enter' }}
       </p>
     </div>
   </div>

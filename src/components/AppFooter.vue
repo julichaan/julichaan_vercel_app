@@ -5,7 +5,7 @@ import { useLanguage } from '../composables/useLanguage'
 const { isSpanish } = useLanguage()
 
 const LINKS = [
-  { label: { es: 'Certificaciones', en: 'Certifications' }, path: '/certificaciones' },
+  { label: { es: 'Sobre mí', en: 'About' }, path: '/about' },
   { label: 'Writeups',       path: '/writeups' },
   { label: 'Blog',           path: '/blog' },
   { label: { es: 'Notas', en: 'Notes' }, path: '/notes' },

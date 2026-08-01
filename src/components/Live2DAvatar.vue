@@ -5,7 +5,7 @@ import hackerHero from '../assets/hacker-hero.png'
 const hovered = ref(false)
 
 const NAV_ITEMS = [
-  { label: 'Certifications', path: '/certificaciones' },
+  { label: 'About',          path: '/about' },
   { label: 'Writeups',       path: '/writeups' },
   { label: 'Blog',           path: '/blog' },
   { label: 'Notes',          path: '/notes' },

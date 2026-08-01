@@ -11,23 +11,23 @@ const router = createRouter({
       component: Home,
       meta: {
         title: {
-          es: `${BASE} | Investigadora de Seguridad y Bug Bounty Hunter`,
+          es: `${BASE} | Investigador de Seguridad y Bug Bounty Hunter`,
           en: `${BASE} | Security Researcher & Bug Bounty Hunter`,
         },
-      },
-    },
-    {
-      path: '/certificaciones',
-      component: () => import('../views/Certificaciones.vue'),
-      meta: {
-        layout: 'default',
-        title: { es: `Certificaciones · ${BASE}`, en: `Certifications · ${BASE}` },
       },
     },
     {
       path: '/writeups',
       component: () => import('../views/Writeups.vue'),
       meta: { layout: 'default', title: `Writeups · ${BASE}` }
+    },
+    {
+      path: '/about',
+      component: () => import('../views/CV.vue'),
+      meta: {
+        layout: 'default',
+        title: { es: `Sobre mí · ${BASE}`, en: `About · ${BASE}` },
+      },
     },
     {
       path: '/blog',
