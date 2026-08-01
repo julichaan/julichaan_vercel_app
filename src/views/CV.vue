@@ -16,14 +16,14 @@ const profile = computed(() => isSpanish.value ? {
   name: 'Julián Espada Rodríguez',
   alias: 'julichaan',
   location: 'Madrid, España',
-  email: 'julichaan@proton.me',
+  email: 'julian.espada.business@gmail.com',
   github: 'github.com/julichaan',
   linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
 } : {
   name: 'Julián Espada Rodríguez',
   alias: 'julichaan',
   location: 'Madrid, Spain',
-  email: 'julichaan@proton.me',
+  email: 'julian.espada.business@gmail.com',
   github: 'github.com/julichaan',
   linkedin: 'linkedin.com/in/juli%C3%A1n-espada-rodr%C3%ADguez-752006246',
 })
@@ -134,10 +134,10 @@ const certifications = computed(() => isSpanish.value ? [
 
 const education = computed(() => isSpanish.value ? [
   { title: 'Grado en Ingeniería Informática', center: 'Universidad Autónoma de Madrid', period: '2018 — 2022' },
-  { title: 'Máster en Ciberseguridad', center: 'UEM — Universidad Europea de Madrid', period: '2022 — 2023' },
+  { title: 'Máster en Ciberseguridad', center: 'ITTI High Institute', period: '2022 — 2023' },
 ] : [
   { title: 'BSc in Computer Engineering', center: 'Autonomous University of Madrid', period: '2018 — 2022' },
-  { title: 'Master’s in Cybersecurity', center: 'UEM — European University of Madrid', period: '2022 — 2023' },
+  { title: 'Master’s in Cybersecurity', center: 'ITTI High Institute', period: '2022 — 2023' },
 ])
 
 const skills = computed(() => isSpanish.value ? {
