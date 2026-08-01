@@ -192,7 +192,7 @@ watch(titleMessage, () => {
 
 <template>
   <div class="font-mono bg-black text-gray-300 min-h-screen">
-    <div class="max-w-5xl mx-auto px-6 py-12 md:py-14">
+    <div class="max-w-[1400px] mx-auto px-6 py-12 md:py-14">
       <header class="mb-10 md:mb-12 pb-8 border-b text-center" style="border-color:#ff003c33">
         <p class="text-xs tracking-widest mb-3" style="color:#ff003c66">// cv</p>
 
@@ -217,7 +217,7 @@ watch(titleMessage, () => {
         </div>
       </header>
 
-      <div class="cv-grid max-w-5xl mx-auto">
+      <div class="cv-grid max-w-[1300px] mx-auto">
         <div class="space-y-12 md:space-y-14">
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'EXPERIENCIA' : 'EXPERIENCE' }}</h2>
@@ -257,7 +257,9 @@ watch(titleMessage, () => {
               </article>
             </div>
           </section>
+        </div>
 
+        <aside class="space-y-10 md:space-y-12 sidebar-panel">
           <section>
             <h2 class="section-title text-center">{{ isSpanish ? 'HABILIDADES' : 'SKILLS' }}</h2>
 
@@ -292,7 +294,7 @@ watch(titleMessage, () => {
               </p>
             </div>
           </section>
-        </div>
+        </aside>
       </div>
 
       <footer class="text-center text-xs text-gray-700 border-t mt-14 pt-6" style="border-color:#ff003c22">
@@ -305,6 +307,26 @@ watch(titleMessage, () => {
 <style scoped>
 .cv-grid {
   display: block;
+}
+
+@media (min-width: 1200px) {
+  .cv-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.9fr) minmax(330px, 1fr);
+    gap: 2.25rem;
+    align-items: start;
+  }
+}
+
+.sidebar-panel {
+  padding-top: 0.25rem;
+}
+
+@media (min-width: 1200px) {
+  .sidebar-panel {
+    position: sticky;
+    top: 1.5rem;
+  }
 }
 
 .section-title {
