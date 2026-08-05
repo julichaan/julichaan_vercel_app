@@ -150,6 +150,182 @@ function copyLink() {
 
 const postsEn = ref([
   {
+    id: 8,
+    title: 'Part 1: The Incident I Never Expected',
+    excerpt: 'The first artifact from a WordPress intrusion investigation: a one-line PHP file that answered with just cc until its two-layer payload was peeled apart, revealing a full file-manager webshell.',
+    date: 'August 2026',
+    category: 'Incident Response Diary',
+    author: 'julichaan',
+    readTime: '9 min read',
+    tags: ['WordPress', 'Webshell', 'DFIR', 'PHP', 'Incident Response'],
+    content: [
+      {
+        type: 'callout', variant: 'info',
+        text: 'Case diary · July 26, 05:40 · IONOS defense alert · First recovered artifact: XymIkzl.php · Analysis based on a static decode of the sample'
+      },
+      {
+        type: 'h2', text: '1. 05:40, an email from IONOS'
+      },
+      {
+        type: 'p',
+        text: 'At 05:40 on July 26, IONOS sent the kind of message that collapses the rest of your morning into a single objective: their defense systems had detected an attack against one of the sites I manage. The environment was a WordPress installation, which immediately widened the list of plausible entry points but did not yet tell me anything useful about what had actually landed on disk.'
+      },
+      {
+        type: 'p',
+        text: 'So I started where these investigations usually become real: not with theories, but with the filesystem. I began walking the web root, checking recent modifications, suspicious PHP files, and anything that looked out of place in a WordPress tree. The first artifact that gave the incident a shape was a file named <code>XymIkzl.php</code>.'
+      },
+      {
+        type: 'h2', text: '2. The first suspicious PHP file'
+      },
+      {
+        type: 'p',
+        text: 'The file did not look like application code. It was a single long line, with <code>error_reporting(0)</code> at the start and an <code>eval(base64_decode(...))</code> pattern wrapped in junk comments. That combination is already enough to stop treating a file as "maybe odd" and start treating it as hostile until proven otherwise.'
+      },
+      {
+        type: 'code',
+        text:
+`<?php error_reporting(0); eval/*-junk-*/(base64_decode/*-junk-*/("ZXZhbCgiPz4i...")); ?>`
+      },
+      {
+        type: 'p',
+        text: 'Those inserted comments mattered. They were not decoration; they were there to break simple signature matching by splitting recognizable tokens such as <code>eval</code> and <code>base64_decode</code> without changing how PHP interprets the file.'
+      },
+      {
+        type: 'callout', variant: 'warn',
+        text: 'When the required parameter was missing, the file answered with a bare <code>cc</code> and exited. That tiny response was the first clue that the real interface was hidden behind an authentication gate.'
+      },
+      {
+        type: 'h2', text: '3. Peeling back the two layers'
+      },
+      {
+        type: 'p',
+        text: 'The outer layer decoded into another <code>eval(base64_decode())</code>. This second stage used a small but telling trick: it prepended <code>"?&gt;"</code> before decoding the inner payload so the evaluated string could jump out of PHP mode and then back into it with a fresh <code>&lt;?php</code> tag. In practice, that let the attacker hide a mixed PHP/HTML admin panel inside an eval chain.'
+      },
+      {
+        type: 'code',
+        text:
+`eval("?>" . base64_decode("PD9waHAgaGVhZGVyKCdDb250ZW50LVR5cGU6IHRleHQvaHRtbDsgY2hhcnNldD11dGYtOCcpOy ..."));`
+      },
+      {
+        type: 'p',
+        text: 'After decoding the second layer, the sample stopped looking like random obfuscation and started looking like a product: a 424-line PHP file manager with a login gate, a Bootstrap interface, and the full set of file operations an intruder needs to live off the land on a compromised host.'
+      },
+      {
+        type: 'h2', text: '4. The gate was almost insulting'
+      },
+      {
+        type: 'code',
+        text:
+`session_start();
+if(!isset($_SESSION['cc']) || isset($_REQUEST['cc'])){
+    $_SESSION['cc'] = $_REQUEST['cc'];
+}
+if($_SESSION['cc'] != 'abcd'){
+    echo 'cc';
+    exit();
+}`
+      },
+      {
+        type: 'p',
+        text: 'That was the whole authentication layer. A four-character password, <code>abcd</code>, passed through <code>$_REQUEST</code>, stored in session state, and checked with no rate limiting, no hashing, and no attempt at concealment beyond returning the string <code>cc</code> when access failed.'
+      },
+      {
+        type: 'p',
+        text: 'From a forensic point of view, this was useful because it gave me immediate traffic pivots: parameter names, the fixed response body, and a concrete value to search for in access logs.'
+      },
+      {
+        type: 'h2', text: '5. What the payload really was'
+      },
+      {
+        type: 'p',
+        text: 'Once inside, the payload exposed what was effectively a browser-based file manager for the compromised server. It could browse directories, inspect permissions, read files, rewrite them, upload new ones, rename paths, create folders, and delete selected items in bulk.'
+      },
+      {
+        type: 'table',
+        headers: ['Capability', 'Evidence in the decoded payload'],
+        rows: [
+          ['Browse directories', 'Uses scandir() and custom folder sorting to render the current path'],
+          ['Edit arbitrary files', 'Writes attacker-controlled content through file_put_contents($path, $file_content)'],
+          ['Rename and chmod', 'Invokes rename() and chmod($file_path, octdec($new_chmod))'],
+          ['Create files and folders', 'Uses fopen()/fwrite() for files and mkdir() for directories'],
+          ['Upload without restrictions', 'Moves uploaded files directly into the current directory with move_uploaded_file()'],
+        ]
+      },
+      {
+        type: 'p',
+        text: 'The interface also leaked host context directly to the operator: server IP, web server software, operating system, host name, and the current PHP user. Before touching anything else on the box, the intruder could already see what kind of platform they had landed on and how much room they had to move.'
+            },
+            {
+        type: 'h3', text: 'How the webshell worked'
+            },
+            {
+        type: 'code',
+        text:
+      `HTTP request with cc=abcd
+        ↓
+      PHP session stores the provided password
+        ↓
+      Gate returns only "cc" if auth fails
+        ↓
+      Successful auth loads the hidden file manager UI
+        ↓
+      Operator can browse, edit, upload, rename, chmod, and delete
+        ↓
+      Any writable .php file becomes an execution point for attacker code`
+      },
+      {
+        type: 'h2', text: '6. Why this was already remote code execution'
+      },
+      {
+        type: 'p',
+        text: 'There was no obvious <code>system()</code> or <code>exec()</code> call in the visible payload, but that distinction barely mattered. A webshell that can upload or rewrite arbitrary <code>.php</code> files already gives the attacker the only primitive they really need: they can place their own code on the server and invoke it over HTTP.'
+      },
+      {
+        type: 'p',
+        text: 'That was the moment the investigation stopped being about a suspicious sample and became a confirmed compromise narrative. The artifact was not a probe, not a leftover test file, and not a half-finished implant. It was an authenticated file-management backdoor designed for persistence and post-compromise operations.'
+      },
+      {
+        type: 'h2', text: '7. Notes I kept from the first artifact'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Artifact name:</strong> <code>XymIkzl.php</code>',
+          '<strong>Hash:</strong> <code>210e60437496d20fb11f1c3d2b84f6ef9f964688775abfc0e3d501fdeaf392f2</code>',
+          '<strong>Interface title:</strong> <code>WebShell by boot</code>',
+          '<strong>Authentication pivot:</strong> requests using <code>cc=abcd</code>',
+          '<strong>Behavioral markers:</strong> two nested <code>eval(base64_decode())</code> layers plus junk comments between tokens',
+          '<strong>UI language clue:</strong> multiple success and error strings in simplified Chinese',
+        ]
+      },
+      {
+        type: 'h2', text: '8. The first real shape of the incident'
+      },
+      {
+        type: 'p',
+        text: 'What I liked least about this file was how ordinary it was. No exotic exploit chain, no theatrical ransomware note, no deeply hidden rootkit. Just a practical PHP backdoor, built to manage files quietly and survive long enough to be useful. But that is exactly why it mattered: it turned a vague alert from a provider into the first hard proof that someone had already been operating inside the site.'
+      },
+      {
+        type: 'p',
+        text: 'This was only the first artifact I documented that morning. The next pieces made the timeline clearer. But this one was the page where the notebook stopped being a suspicion log and became an incident.'
+      },
+      {
+        type: 'h2', text: '9. IOCs'
+      },
+      {
+        type: 'ul',
+        items: [
+          '<strong>Authentication parameter and value:</strong> <code>cc=abcd</code>',
+          '<strong>Interface title:</strong> <code>WebShell by boot</code>',
+          '<strong>Relevant request parameters:</strong> <code>type</code>, <code>path</code>, <code>file_content</code>, <code>file_new_name</code>, <code>new_chmod</code>, <code>new_name</code>, <code>new_content</code>, <code>act</code> (<code>del</code> | <code>upload</code>), <code>childcheck[]</code>, <code>fileToUpload</code>',
+          '<strong>Literal strings in code:</strong> <code>修改文件内容成功</code>, <code>文件已经存在</code>, <code>目录创建成功</code>, <code>无法写入文件</code>',
+          '<strong>Obfuscation pattern:</strong> two nested <code>eval(base64_decode())</code> stages plus junk comments between PHP tokens and <code>error_reporting(0)</code> at the start',
+          '<strong>SHA-256:</strong> <code>210e60437496d20fb11f1c3d2b84f6ef9f964688775abfc0e3d501fdeaf392f2</code>',
+        ]
+      },
+    ]
+  },
+  {
     id: 7,
     title: 'Dotfiles State Tampering: Redacted Bug Bounty Case',
     excerpt: 'A bug bounty note based on a real finding: insecure directory creation permissions (0o777) around local state storage, enabling tampering under permissive umask setups.',
