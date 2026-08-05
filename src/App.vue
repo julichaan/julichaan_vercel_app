@@ -1,6 +1,7 @@
 <script setup>
 import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { Analytics } from '@vercel/analytics/vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import { useLanguage } from './composables/useLanguage'
@@ -21,6 +22,7 @@ watch([() => route.meta?.title, language], ([metaTitle]) => {
 </script>
 
 <template>
+  <Analytics />
   <div class="app-shell">
     <AppHeader v-if="hasLayout" />
     <main class="main-content">
